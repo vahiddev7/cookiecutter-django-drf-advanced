@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  db:
+    image: docker.arvancloud.ir/postgres:17
+    container_name: accountant_postgres
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: accountant
+      POSTGRES_USER: accountant_user
+      POSTGRES_PASSWORD: 7663270a-1528-4f5a-a768-3bb045512468
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - accountant_network
+
+  nginx:
+    image: nginx:latest
+    container_name: my_nginx_server
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      # - "443:443"
+    volumes:
+      - .docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      # - ./nginx/certs:/etc/nginx/certs:ro
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - db
+    networks:
+      - accountant_network
+
+volumes:
+  postgres_data:
+    driver: local
+  nginx_logs:
+    driver: local
+
+networks:
+  accountant_network:
+    driver: bridge

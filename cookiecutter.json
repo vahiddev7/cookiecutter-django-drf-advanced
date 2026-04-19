@@ -2,5 +2,6 @@
   "project_name": "My Django Project",
   "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_') }}",
   "author_name": "Your Name",
-  "use_drf": "y"
+  "use_drf": "y",
+  "use_docker": "y"
 }

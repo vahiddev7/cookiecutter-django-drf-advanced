@@ -1,0 +1,20 @@
+-r base.txt
+
+ipython
+pre-commit
+
+pytest
+pytest-django
+
+factory-boy
+Faker
+
+flake8
+
+ipdb
+
+mypy
+django-stubs
+djangorestframework-stubs
+boto3-stubs
+drf-spectacular
