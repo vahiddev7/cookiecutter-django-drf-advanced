@@ -1,19 +1,19 @@
-Django
-django-environ
+Django==5.2.13
+django-environ==0.13.0
 
-psycopg2-binary
-djangorestframework
-djangorestframework_simplejwt
+psycopg2-binary==2.9.11
+djangorestframework==3.17.1
+djangorestframework_simplejwt==5.5.1
 
-django-filter
-django-extensions
-django-cors-headers
-django-storages
+django-filter==25.2
+django-extensions==4.1
+django-cors-headers==4.9.0
+django-storages==1.14.6
 
-drf-jwt
+drf-jwt==1.19.2
 
-pillow
+pillow==12.2.0
 
-requests
+requests==2.33.1
 
-persiantools
+persiantools==5.5.0
