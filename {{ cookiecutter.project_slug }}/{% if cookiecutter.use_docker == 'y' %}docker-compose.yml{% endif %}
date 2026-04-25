@@ -1,20 +1,56 @@
 version: '3.9'
 
 services:
+  {% if cookiecutter.database_engine == 'postgresql' %}
   db:
     image: docker.arvancloud.ir/postgres:17
-    container_name: accountant_postgres
+    container_name: {{ cookiecutter.project_slug }}_postgres
     restart: unless-stopped
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
-      POSTGRES_DB: accountant
-      POSTGRES_USER: accountant_user
-      POSTGRES_PASSWORD: 7663270a-1528-4f5a-a768-3bb045512468
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
-      - accountant_network
+      - {{ cookiecutter.project_slug }}_network
+
+  {% elif cookiecutter.database_engine == 'mysql' %}
+  db:
+    image: mysql:8.0 # یا نسخه مورد نظر شما
+    container_name: {{ cookiecutter.project_slug }}_mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes' # یا رمز را مستقیم تنظیم کنید
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  {% elif cookiecutter.database_engine == 'sqlserver' %}
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: {{ cookiecutter.project_slug }}_sqlserver
+    restart: unless-stopped
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${DB_PASSWORD}
+      # MSSQL_PID: "Developer" # or "Express", "Standard"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+    {% endif %}
+    
 
   nginx:
     image: nginx:latest
@@ -30,7 +66,7 @@ services:
     depends_on:
       - db
     networks:
-      - accountant_network
+      - {{ cookiecutter.project_slug }}_network
 
   {% if cookiecutter.use_celery == 'y' %}
   {% if cookiecutter.celery_broker == 'redis' %}
@@ -39,7 +75,7 @@ services:
     container_name: accountant_redis
     restart: unless-stopped
     networks:
-      - accountant_network
+      - {{ cookiecutter.project_slug }}_network
   {% elif cookiecutter.celery_broker == 'rabbitmq' %}
   broker:
     image: rabbitmq:3-management
@@ -48,7 +84,7 @@ services:
     ports:
       - "15672:15672"
     networks:
-      - accountant_network
+      - {{ cookiecutter.project_slug }}_network
   {% endif %}
 
   worker:
@@ -61,15 +97,23 @@ services:
       - db
       - broker
     networks:
-      - accountant_network
+      - {{ cookiecutter.project_slug }}_network
 {% endif %}
 
 volumes:
+  {% if cookiecutter.database_engine == 'postgresql' %}
   postgres_data:
     driver: local
+  {% elif cookiecutter.database_engine == 'mysql' %}
+  mysql_data:
+    driver: local
+  {% elif cookiecutter.database_engine == 'sqlserver' %}
+  sqlserver_data:
+    driver: local
+  {% endif %}
   nginx_logs:
     driver: local
 
 networks:
-  accountant_network:
+  {{ cookiecutter.project_slug }}_network:
     driver: bridge
