@@ -1,5 +1,6 @@
 from pathlib import Path
 import os
+from config.settings.env import env
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -16,22 +17,61 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-{% if cookiecutter.use_drf == "y" %}
+    {% if cookiecutter.use_drf == "y" %}
     'rest_framework',
-{% endif %}
-
+    {% endif %}
+    {% if cookiecutter.use_swagger == 'y' %}
+    "drf_spectacular",
+    {% endif %}
+    {% if cookiecutter.database_engine == 'sqlserver' %}
+    "sql_server.pyodbc",
+    {% endif %}
+    {% if cookiecutter.database_engine == 'mysql' %}
+    "PyMySQL",
+    {% endif %}
     'apps.common',
     'apps.users',
 ]
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+{% if cookiecutter.database_engine == 'sqlite' %}
+DATABASES['default'].update({
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': BASE_DIR / 'db.sqlite3',
+})
+{% elif cookiecutter.database_engine == 'postgresql' %}
+DATABASES['default'].update({
+    'ENGINE': 'django.db.backends.postgresql',
+    'NAME': env("DB_NAME"),
+    'USER': env("DB_USER"),
+    'PASSWORD': env("DB_PASSWORD"),
+    'HOST': env("DB_HOST"),
+    'PORT': env("DB_PORT"),    
+})
+{% elif cookiecutter.database_engine == 'mysql' %}
+DATABASES['default'].update({
+    'ENGINE': 'django.db.backends.mysql',
+    'NAME': env("DB_NAME"),
+    'USER': env("DB_USER"),
+    'PASSWORD': env("DB_PASSWORD"),
+    'HOST': env("DB_HOST"),
+    'PORT': env("DB_PORT"), 
+    'OPTIONS': {
+        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
     }
-}
+})
+{% elif cookiecutter.database_engine == 'sqlserver' %}
+DATABASES['default'].update({
+    'ENGINE': 'sql_server.pyodbc',
+    'NAME': env("DB_NAME"),
+    'USER': env("DB_USER"),
+    'PASSWORD': env("DB_PASSWORD"),
+    'HOST': env("DB_HOST"),
+    'PORT': env("DB_PORT"), 
+    'OPTIONS': {
+        'driver': 'ODBC Driver 17 for SQL Server',
+    },
+})
+{% endif %}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -103,5 +143,9 @@ AUTH_USER_MODEL = "users.User"
 
 
 {% if cookiecutter.use_drf == "y" %}
-REST_FRAMEWORK = {}
+REST_FRAMEWORK = {
+    {% if cookiecutter.use_swagger == 'y' %}
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    {% endif %}
+}
 {% endif %}
