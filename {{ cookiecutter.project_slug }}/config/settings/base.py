@@ -149,3 +149,12 @@ REST_FRAMEWORK = {
     {% endif %}
 }
 {% endif %}
+
+
+{% if cookiecutter.use_celery == 'y' %}
+# Celery Configuration
+CELERY_BROKER_URL = "{% if cookiecutter.celery_broker == 'redis' %}redis://broker:6379/0{% else %}amqp://guest:guest@broker:5672//{% endif %}"
+CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+{% endif %}

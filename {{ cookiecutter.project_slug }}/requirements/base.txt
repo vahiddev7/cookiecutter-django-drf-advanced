@@ -28,3 +28,8 @@ PyMySQL
 {% if cookiecutter.database_engine == 'sqlserver' %}
 django-mssql-backend
 {%- endif %}
+
+{% if cookiecutter.use_celery == 'y' %}
+celery>=5.0.0
+redis>=4.0.0
+{% endif %}

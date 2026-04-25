@@ -32,6 +32,38 @@ services:
     networks:
       - accountant_network
 
+  {% if cookiecutter.use_celery == 'y' %}
+  {% if cookiecutter.celery_broker == 'redis' %}
+  broker:
+    image: redis:7-alpine
+    container_name: accountant_redis
+    restart: unless-stopped
+    networks:
+      - accountant_network
+  {% elif cookiecutter.celery_broker == 'rabbitmq' %}
+  broker:
+    image: rabbitmq:3-management
+    container_name: accountant_rabbitmq
+    restart: unless-stopped
+    ports:
+      - "15672:15672"
+    networks:
+      - accountant_network
+  {% endif %}
+
+  worker:
+    build: .
+    command: celery -A config worker -l info
+    container_name: accountant_celery_worker
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - broker
+    networks:
+      - accountant_network
+{% endif %}
+
 volumes:
   postgres_data:
     driver: local

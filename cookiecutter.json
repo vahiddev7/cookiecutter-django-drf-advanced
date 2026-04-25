@@ -5,5 +5,7 @@
   "use_drf": "y",
   "use_swagger": ["y", "n"],
   "use_docker": "y",
-  "database_engine": ["postgresql", "mysql", "sqlite", "sqlserver"]
+  "database_engine": ["postgresql", "mysql", "sqlite", "sqlserver"],
+  "use_celery": ["y", "n"],
+  "celery_broker": ["redis", "rabbitmq"]
 }
