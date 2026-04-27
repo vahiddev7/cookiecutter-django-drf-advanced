@@ -70,11 +70,19 @@ echo "${APPS_PY_CONTENT}" > "${APP_FULL_PATH}/apps.py" # Write content to apps.p
 mkdir -p "${APP_FULL_PATH}/models"
 touch "${APP_FULL_PATH}/models/__init__.py"
 
+mkdir -p "${APP_FULL_PATH}/services
+touch "${APP_FULL_PATH}/services/__init__.py"
+
+mkdir -p "${APP_FULL_PATH}/selectors
+touch "${APP_FULL_PATH}/selectors/__init__.py"
+
+mkdir -p "${APP_FULL_PATH}/serializers"
+touch "${APP_FULL_PATH}/serializers/__init__.py"
+
+mkdir -p "${APP_FULL_PATH}/permissions"
+touch "${APP_FULL_PATH}/permissions/__init__.py"
+
 touch "${APP_FULL_PATH}/admin.py"
-touch "${APP_FULL_PATH}/permissions.py"
-touch "${APP_FULL_PATH}/selectors.py"
-touch "${APP_FULL_PATH}/serializers.py"
-touch "${APP_FULL_PATH}/services.py"
 touch "${APP_FULL_PATH}/urls.py"
 
 # Migrations subdirectory
@@ -84,14 +92,23 @@ touch "${APP_FULL_PATH}/migrations/__init__.py"
 # Tests subdirectory
 mkdir -p "${APP_FULL_PATH}/tests"
 touch "${APP_FULL_PATH}/tests/__init__.py"
-touch "${APP_FULL_PATH}/tests/test_models.py"
-touch "${APP_FULL_PATH}/tests/test_views.py"
+
+mkdir -p "${APP_FULL_PATH}/tests/api"
+touch "${APP_FULL_PATH}/tests/api/__init__.py"
+
+mkdir -p "${APP_FULL_PATH}/tests/services"
+touch "${APP_FULL_PATH}/tests/services/__init__.py"
+
+mkdir -p "${APP_FULL_PATH}/tests/selectors"
+touch "${APP_FULL_PATH}/tests/selectors/__init__.py"
 
 # Views subdirectory
 mkdir -p "${APP_FULL_PATH}/views"
+mkdir -p "${APP_FULL_PATH}/views/api"
+mkdir -p "${APP_FULL_PATH}/views/api/v1"
+touch "${APP_FULL_PATH}/views/api/v1/__init__.py"
+touch "${APP_FULL_PATH}/views/api/__init__.py"
 touch "${APP_FULL_PATH}/views/__init__.py"
-touch "${APP_FULL_PATH}/views/api.py"
-
 
 echo ""
 echo "--------------------------------------------------"

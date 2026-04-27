@@ -1,14 +1,15 @@
-from pathlib import Path
 import os
+from pathlib import Path
 from config.settings.env import env
+from datetime import timedelta
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-SECRET_KEY = 'change-this-in-production'
+SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = False
+DEBUG = env("DEBUG", default=False)
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -32,6 +33,10 @@ INSTALLED_APPS = [
     'apps.common',
     'apps.users',
 ]
+
+DATABASES = {
+    "default": {}
+}
 
 {% if cookiecutter.database_engine == 'sqlite' %}
 DATABASES['default'].update({
@@ -147,8 +152,27 @@ REST_FRAMEWORK = {
     {% if cookiecutter.use_swagger == 'y' %}
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     {% endif %}
+    
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
 }
 {% endif %}
+
+{% if cookiecutter.use_swagger == 'y' %}
+SPECTACULAR_SETTINGS = {
+    "TITLE": "{{ cookiecutter.project_slug }}" + " API",
+    "COMPONENT_SPLIT_REQUEST": True,
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {"deepLinking": True},
+}
+{% endif %}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
 
 
 {% if cookiecutter.use_celery == 'y' %}
