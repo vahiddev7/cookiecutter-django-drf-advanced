@@ -1,50 +1,116 @@
 # 🚀 Django Clean Architecture Cookiecutter
 
-A production-ready Django project template following a clean, scalable, and maintainable architecture using **Services**, **Selectors**, and modular apps.
+<p align="center">
+  <b>Production-ready Django template for scalable backend systems</b><br/>
+  Built with clean architecture, best practices, and developer experience in mind.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Django-4.x-green.svg" />
+  <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" />
+  <img src="https://img.shields.io/badge/Docker-ready-blue.svg" />
+  <img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" />
+</p>
 
 ---
 
-## ✨ Features
+## 🎬 Demo
+
+> Coming soon (you can add a GIF here showing API usage or app generation)
+
+---
+
+## ✨ Why this template?
+
+Most Django projects start simple… and become messy.
+
+This template gives you a **solid foundation from day one**:
 
 * 🧱 Clean Architecture (Service & Selector pattern)
-* 🔌 Modular Django apps structure
-* 🔐 Ready-to-use authentication system
-* 📦 Docker support (development & production)
-* ⚙️ Environment-based settings (dev/prod)
-* 🧪 Structured test setup (API, services, selectors)
-* 🔄 API versioning (`/api/v1/`)
-* 🧰 Pre-configured project layout for scalability
+* 🔄 Scalable modular apps
+* 🧪 Built-in testing structure
+* ⚙️ Environment-based settings
+* 🐳 Docker-ready
+* 🔌 API-first design with versioning
 
 ---
 
-## 🧠 Architecture Overview
+## 🧠 Architecture (Opinionated)
 
-This template follows an opinionated architecture:
+```
+Request → View → Service → Selector → Model → DB
+```
+
+### 🔹 Views
+
+Thin layer (just HTTP handling)
 
 ### 🔹 Services
 
-Handle business logic and write operations.
+Business logic & write operations
 
 ### 🔹 Selectors
 
-Handle read-only queries from the database.
+Read-only queries
 
-### 🔹 Serializers
+### 🔹 Models
 
-Validate and transform data.
-
-### 🔹 Views (API)
-
-Thin layer that connects HTTP requests to services/selectors.
+Pure data layer
 
 ---
 
-### 📌 Why this approach?
+## 📊 Architecture Diagram
 
-* Keeps views clean and simple
-* Makes business logic reusable
-* Improves testability
-* Scales well for large projects
+```
+                ┌──────────────┐
+                │    Client    │
+                └──────┬───────┘
+                       │
+                       ▼
+                ┌──────────────┐
+                │     View     │
+                └──────┬───────┘
+                       │
+        ┌──────────────┴──────────────┐
+        ▼                             ▼
+┌──────────────┐              ┌──────────────┐
+│   Service    │              │   Selector   │
+│ (write logic)│              │ (read logic) │
+└──────┬───────┘              └──────┬───────┘
+       │                             │
+       └──────────────┬──────────────┘
+                      ▼
+               ┌──────────────┐
+               │    Model     │
+               └──────────────┘
+                      │
+                      ▼
+               ┌──────────────┐
+               │   Database   │
+               └──────────────┘
+```
+
+---
+
+## ⚡ Quick Start
+
+### 1. Install Cookiecutter
+
+```bash
+pip install cookiecutter
+```
+
+### 2. Generate your project
+
+```bash
+cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced
+```
+
+### 3. Run with Docker
+
+```bash
+docker-compose up --build
+```
 
 ---
 
@@ -59,64 +125,56 @@ apps/
     serializers/
     views/
     tests/
-```
 
-Each app is self-contained and follows the same structure.
-
----
-
-## ⚡ Quick Start
-
-### 1. Install Cookiecutter
-
-```bash
-pip install cookiecutter
-```
-
-### 2. Generate the project
-
-```bash
-cookiecutter https://github.com/your-username/your-repo
-```
-
-### 3. Run with Docker
-
-```bash
-docker-compose up --build
+config/
+  settings/
+    base.py
+    dev.py
+    prod.py
 ```
 
 ---
 
-## ⚙️ Configuration Options
+## 🧩 Create New App (🔥 Killer Feature)
 
-During setup, you will be prompted for:
+```bash
+./scripts/start_app.sh blog
+```
 
-* `project_name`
-* `project_slug`
-* `use_docker`
-* `use_postgres`
-* `use_celery`
+Generates:
+
+```
+apps/blog/
+  models/
+  services/
+  selectors/
+  serializers/
+  views/api/v1/
+  tests/
+```
 
 ---
 
-## 🛠 Development
+## 🔐 Authentication Included
 
-### Run migrations
+* Register
+* Login
+* Extendable token system
 
-```bash
-python manage.py migrate
-```
+---
 
-### Create superuser
+## ⚙️ Configuration
 
-```bash
-python manage.py createsuperuser
-```
+During setup:
 
-### Run server
-
-```bash
-python manage.py runserver
+```json
+{
+  "project_name": "My Project",
+  "project_slug": "my_project",
+  "use_docker": ["y", "n"],
+  "use_postgres": ["y", "n"],
+  "use_celery": ["y", "n"]
+}
 ```
 
 ---
@@ -127,45 +185,25 @@ python manage.py runserver
 pytest
 ```
 
-Tests are organized by:
+Structure:
 
-* API
-* Services
-* Selectors
-
----
-
-## 🧩 Creating a New App
-
-Use the provided script:
-
-```bash
-./scripts/start_app.sh blog
-```
-
-This will generate a fully structured app with:
-
-* services
-* selectors
-* serializers
-* tests
-* API views
+* API tests
+* Service tests
+* Selector tests
 
 ---
 
-## 🔐 Authentication
+## 🐳 Docker
 
-Includes basic authentication system:
+Includes:
 
-* Register
-* Login
-* Token-based authentication (extendable)
+* Dev environment
+* Production setup
+* Nginx config
 
 ---
 
 ## 🌍 Environment Settings
-
-Settings are split into:
 
 ```
 settings/
@@ -176,57 +214,52 @@ settings/
 
 ---
 
-## 🐳 Docker Support
+## 💡 When to Use
 
-Includes:
-
-* Development setup
-* Production-ready Dockerfile
-* Nginx configuration
+✅ Large-scale backend systems
+✅ Team projects
+✅ Clean architecture lovers
 
 ---
 
-## 📌 When should you use this template?
+## ⚠️ When NOT to Use
 
-✅ Large-scale Django projects
-✅ Teams working on backend APIs
-✅ Projects needing clean and testable architecture
-
----
-
-## ⚠️ When NOT to use it
-
-❌ Small/simple projects
-❌ Prototypes or quick MVPs
+❌ Simple scripts
+❌ Small MVPs
 
 ---
 
-## 💡 Philosophy
+## 🧠 Philosophy
 
 This template is **opinionated**.
 
-It prioritizes:
+It favors:
 
+* long-term maintainability
 * scalability
-* maintainability
-* separation of concerns
+* clear separation of concerns
 
-over simplicity.
+over quick-and-dirty setups.
+
+---
+
+## 🗺 Roadmap
+
+* [ ] Add JWT authentication
+* [ ] Add CI/CD pipeline
+* [ ] Add GraphQL option
+* [ ] Add lightweight mode
+* [ ] Add project CLI
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, issues, and suggestions are welcome!
-
----
-
-## 📄 License
-
-MIT License
+PRs, issues, and ideas are welcome.
 
 ---
 
 ## ⭐ Support
 
-If you find this useful, consider giving it a star ⭐ on GitHub!
+If this project helps you, give it a star ⭐
+It helps others discover it.
