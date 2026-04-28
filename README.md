@@ -245,7 +245,6 @@ over quick-and-dirty setups.
 
 ## 🗺 Roadmap
 
-* [ ] Add JWT authentication
 * [ ] Add CI/CD pipeline
 * [ ] Add GraphQL option
 * [ ] Add lightweight mode
