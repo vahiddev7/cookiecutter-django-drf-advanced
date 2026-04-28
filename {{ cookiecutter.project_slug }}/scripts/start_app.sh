@@ -70,10 +70,10 @@ echo "${APPS_PY_CONTENT}" > "${APP_FULL_PATH}/apps.py" # Write content to apps.p
 mkdir -p "${APP_FULL_PATH}/models"
 touch "${APP_FULL_PATH}/models/__init__.py"
 
-mkdir -p "${APP_FULL_PATH}/services
+mkdir -p "${APP_FULL_PATH}/services"
 touch "${APP_FULL_PATH}/services/__init__.py"
 
-mkdir -p "${APP_FULL_PATH}/selectors
+mkdir -p "${APP_FULL_PATH}/selectors"
 touch "${APP_FULL_PATH}/selectors/__init__.py"
 
 mkdir -p "${APP_FULL_PATH}/serializers"
