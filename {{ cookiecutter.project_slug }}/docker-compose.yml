@@ -54,6 +54,12 @@ services:
       dockerfile: docker/production/Dockerfile
     container_name: {{ cookiecutter.project_slug }}_app
     restart: unless-stopped
+    env_file:
+      - .env
+    {% if cookiecutter.database_engine != 'sqlite' %}
+    environment:
+      DB_HOST: db
+    {% endif %}
     volumes:
       - .:/app
     ports:
@@ -104,6 +110,13 @@ services:
       dockerfile: docker/production/Dockerfile
     command: celery -A config worker -l info
     container_name: {{ cookiecutter.project_slug }}_celery_worker
+    restart: unless-stopped
+    env_file:
+      - .env
+    {% if cookiecutter.database_engine != 'sqlite' %}
+    environment:
+      DB_HOST: db
+    {% endif %}
     volumes:
       - .:/app
     {% if cookiecutter.database_engine != 'sqlite' %}
