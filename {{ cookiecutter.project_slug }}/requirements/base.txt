@@ -31,5 +31,7 @@ django-mssql-backend
 
 {% if cookiecutter.use_celery == 'y' %}
 celery>=5.0.0
+{% if cookiecutter.celery_broker == 'redis' %}
 redis>=4.0.0
+{% endif %}
 {% endif %}
