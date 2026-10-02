@@ -3,6 +3,8 @@ set -e
 
 echo "Running project ....."
 
+export DJANGO_SETTINGS_MODULE="${DJANGO_SETTINGS_MODULE:-config.settings.prod}"
+
 python manage.py migrate
 python manage.py collectstatic --noinput
 
