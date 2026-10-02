@@ -4,9 +4,9 @@ django-environ==0.13.0
 {% if cookiecutter.database_engine == 'postgresql' %}
 psycopg2-binary==2.9.11
 {% elif cookiecutter.database_engine == 'mysql' %}
-PyMySQL==1.1.2
+PyMySQL==1.2.3
 {% elif cookiecutter.database_engine == 'sqlserver' %}
-django-mssql-backend==2.8.1
+mssql-django==2.0.0
 {% endif %}
 
 {% if cookiecutter.use_drf == 'y' %}
