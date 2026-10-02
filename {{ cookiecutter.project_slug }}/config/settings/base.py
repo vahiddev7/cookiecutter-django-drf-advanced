@@ -1,15 +1,22 @@
 import os
-from pathlib import Path
-from config.settings.env import env
 from datetime import timedelta
+from pathlib import Path
+
+from config.settings.env import env
+
+{% if cookiecutter.database_engine == "mysql" %}
+import pymysql
+
+pymysql.install_as_MySQLdb()
+{% endif %}
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = env("DEBUG", default=False)
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['*'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=[])
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -23,12 +30,6 @@ INSTALLED_APPS = [
     {% endif %}
     {% if cookiecutter.use_swagger == 'y' %}
     "drf_spectacular",
-    {% endif %}
-    {% if cookiecutter.database_engine == 'sqlserver' %}
-    "sql_server.pyodbc",
-    {% endif %}
-    {% if cookiecutter.database_engine == 'mysql' %}
-    "PyMySQL",
     {% endif %}
     'apps.common',
     'apps.users',
@@ -79,7 +80,7 @@ DATABASES['default'].update({
 {% endif %}
 
 # Password validation
-# https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -140,7 +141,7 @@ ROOT_URLCONF = 'config.urls'
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
-STATIC_ROOT = BASE_DIR / 'static'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
