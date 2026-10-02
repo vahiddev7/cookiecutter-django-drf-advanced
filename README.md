@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Django-4.x-green.svg" />
+  <img src="https://img.shields.io/badge/Django-5.2-green.svg" />
   <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" />
   <img src="https://img.shields.io/badge/Docker-ready-blue.svg" />
   <img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" />
@@ -109,7 +109,7 @@ cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced
 ### 3. Run with Docker
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 ---
@@ -171,9 +171,12 @@ During setup:
 {
   "project_name": "My Project",
   "project_slug": "my_project",
-  "use_docker": ["y", "n"],
-  "use_postgres": ["y", "n"],
-  "use_celery": ["y", "n"]
+  "use_drf": "y",
+  "use_swagger": ["y", "n"],
+  "use_docker": "y",
+  "database_engine": ["postgresql", "mysql", "sqlite", "sqlserver"],
+  "use_celery": ["y", "n"],
+  "celery_broker": ["redis", "rabbitmq"]
 }
 ```
 
