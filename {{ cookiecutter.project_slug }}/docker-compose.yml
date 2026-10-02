@@ -61,7 +61,8 @@ services:
       DB_HOST: db
     {% endif %}
     volumes:
-      - .:/app
+      - static_data:/app/staticfiles
+      - media_data:/app/media
     ports:
       - "8000:8000"
     {% if cookiecutter.database_engine != 'sqlite' %}
@@ -79,6 +80,8 @@ services:
       - "80:80"
     volumes:
       - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - static_data:/app/staticfiles:ro
+      - media_data:/app/media:ro
       - nginx_logs:/var/log/nginx
     depends_on:
       - app
@@ -118,7 +121,7 @@ services:
       DB_HOST: db
     {% endif %}
     volumes:
-      - .:/app
+      - media_data:/app/media
     {% if cookiecutter.database_engine != 'sqlite' %}
     depends_on:
       - db
@@ -139,6 +142,8 @@ volumes:
   {% elif cookiecutter.database_engine == 'sqlserver' %}
   sqlserver_data:
   {% endif %}
+  static_data:
+  media_data:
   nginx_logs:
 
 networks:
