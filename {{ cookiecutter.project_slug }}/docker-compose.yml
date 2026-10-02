@@ -3,7 +3,7 @@ version: '3.9'
 services:
   {% if cookiecutter.database_engine == 'postgresql' %}
   db:
-    image: docker.arvancloud.ir/postgres:17
+    image: postgres:17
     container_name: {{ cookiecutter.project_slug }}_postgres
     restart: unless-stopped
     ports:
