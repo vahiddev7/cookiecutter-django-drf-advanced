@@ -18,9 +18,9 @@ persiantools = "5.5.0"
 {% if cookiecutter.database_engine == "postgresql" %}
 psycopg2-binary = "2.9.11"
 {% elif cookiecutter.database_engine == "mysql" %}
-pymysql = "*"
+pymysql = "1.1.2"
 {% elif cookiecutter.database_engine == "sqlserver" %}
-django-mssql-backend = "*"
+django-mssql-backend = "2.8.1"
 {% endif %}
 
 {% if cookiecutter.use_drf == "y" %}
@@ -30,7 +30,7 @@ django-filter = "25.2"
 drf-jwt = "1.19.2"
 {% endif %}
 
-{% if cookiecutter.use_swagger == "y" %}
+{% if cookiecutter.use_drf == "y" and cookiecutter.use_swagger == "y" %}
 drf-spectacular = "0.29.0"
 {% endif %}
 
@@ -54,7 +54,9 @@ flake8 = "7.3.0"
 ipdb = "0.13.13"
 mypy = "1.20.1"
 django-stubs = "6.0.3"
+{% if cookiecutter.use_drf == "y" %}
 djangorestframework-stubs = "3.16.9"
+{% endif %}
 boto3-stubs = "1.42.93"
 
 [tool.pytest.ini_options]
