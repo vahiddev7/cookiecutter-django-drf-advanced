@@ -6,12 +6,56 @@ authors = ["{{ cookiecutter.author_name }}"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-django = "^5.0"
-djangorestframework = "^3.14"
+django = "5.2.13"
+django-environ = "0.13.0"
+django-extensions = "4.1"
+django-cors-headers = "4.9.0"
+django-storages = "1.14.6"
+pillow = "12.2.0"
+requests = "2.33.1"
+persiantools = "5.5.0"
+
+{% if cookiecutter.database_engine == "postgresql" %}
+psycopg2-binary = "2.9.11"
+{% elif cookiecutter.database_engine == "mysql" %}
+pymysql = "*"
+{% elif cookiecutter.database_engine == "sqlserver" %}
+django-mssql-backend = "*"
+{% endif %}
+
+{% if cookiecutter.use_drf == "y" %}
+djangorestframework = "3.17.1"
+djangorestframework-simplejwt = "5.5.1"
+django-filter = "25.2"
+drf-jwt = "1.19.2"
+{% endif %}
+
+{% if cookiecutter.use_swagger == "y" %}
+drf-spectacular = "0.29.0"
+{% endif %}
+
+{% if cookiecutter.use_celery == "y" %}
+celery = ">=5.0.0"
+{% if cookiecutter.celery_broker == "redis" %}
+redis = ">=4.0.0"
+{% endif %}
+{% endif %}
 
 [tool.poetry.group.test.dependencies]
-pytest = "^8.0"
-pytest-django = "^4.8"
+pytest = "9.0.3"
+pytest-django = "4.12.0"
+factory-boy = "3.3.3"
+Faker = "40.15.0"
+
+[tool.poetry.group.dev.dependencies]
+ipython = "8.39.0"
+pre-commit = "4.5.1"
+flake8 = "7.3.0"
+ipdb = "0.13.13"
+mypy = "1.20.1"
+django-stubs = "6.0.3"
+djangorestframework-stubs = "3.16.9"
+boto3-stubs = "1.42.93"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
