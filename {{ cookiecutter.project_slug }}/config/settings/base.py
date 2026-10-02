@@ -178,8 +178,16 @@ SIMPLE_JWT = {
 
 {% if cookiecutter.use_celery == 'y' %}
 # Celery Configuration
-CELERY_BROKER_URL = "{% if cookiecutter.celery_broker == 'redis' %}redis://broker:6379/0{% else %}amqp://guest:guest@broker:5672//{% endif %}"
-CELERY_RESULT_BACKEND = CELERY_BROKER_URL
+{% if cookiecutter.celery_broker == 'redis' %}
+CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://broker:6379/0")
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://broker:6379/0")
+{% else %}
+CELERY_BROKER_URL = env(
+    "CELERY_BROKER_URL",
+    default="amqp://guest:guest@broker:5672//",
+)
+CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="rpc://")
+{% endif %}
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 {% endif %}
