@@ -15,6 +15,7 @@ ipdb==0.13.13
 
 mypy==1.20.1
 django-stubs==6.0.3
+{% if cookiecutter.use_drf == 'y' %}
 djangorestframework-stubs==3.16.9
+{% endif %}
 boto3-stubs==1.42.93
-drf-spectacular==0.29.0
