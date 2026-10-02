@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     {% if cookiecutter.use_drf == "y" %}
     'rest_framework',
     {% endif %}
-    {% if cookiecutter.use_swagger == 'y' %}
+    {% if cookiecutter.use_drf == 'y' and cookiecutter.use_swagger == 'y' %}
     "drf_spectacular",
     {% endif %}
     'apps.common',
@@ -51,7 +51,7 @@ DATABASES['default'].update({
     'USER': env("DB_USER"),
     'PASSWORD': env("DB_PASSWORD"),
     'HOST': env("DB_HOST"),
-    'PORT': env("DB_PORT"),    
+    'PORT': env("DB_PORT"),
 })
 {% elif cookiecutter.database_engine == 'mysql' %}
 DATABASES['default'].update({
@@ -60,7 +60,7 @@ DATABASES['default'].update({
     'USER': env("DB_USER"),
     'PASSWORD': env("DB_PASSWORD"),
     'HOST': env("DB_HOST"),
-    'PORT': env("DB_PORT"), 
+    'PORT': env("DB_PORT"),
     'OPTIONS': {
         'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
     }
@@ -72,7 +72,7 @@ DATABASES['default'].update({
     'USER': env("DB_USER"),
     'PASSWORD': env("DB_PASSWORD"),
     'HOST': env("DB_HOST"),
-    'PORT': env("DB_PORT"), 
+    'PORT': env("DB_PORT"),
     'OPTIONS': {
         'driver': 'ODBC Driver 17 for SQL Server',
     },
@@ -102,7 +102,6 @@ LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 LANGUAGE_CODE = 'fa'
 TIME_ZONE = 'UTC'
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 
 TEMPLATES = [
@@ -132,9 +131,7 @@ MIDDLEWARE = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# Asgi config for channels
 ASGI_APPLICATION = "config.asgi.application"
-
 
 ROOT_URLCONF = 'config.urls'
 
@@ -144,23 +141,25 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-
 AUTH_USER_MODEL = "users.User"
-
 
 {% if cookiecutter.use_drf == "y" %}
 REST_FRAMEWORK = {
     {% if cookiecutter.use_swagger == 'y' %}
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     {% endif %}
-    
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
 {% endif %}
 
-{% if cookiecutter.use_swagger == 'y' %}
+{% if cookiecutter.use_drf == 'y' and cookiecutter.use_swagger == 'y' %}
 SPECTACULAR_SETTINGS = {
     "TITLE": "{{ cookiecutter.project_slug }}" + " API",
     "COMPONENT_SPLIT_REQUEST": True,
@@ -168,13 +167,6 @@ SPECTACULAR_SETTINGS = {
     "SWAGGER_UI_SETTINGS": {"deepLinking": True},
 }
 {% endif %}
-
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-}
-
 
 {% if cookiecutter.use_celery == 'y' %}
 # Celery Configuration
