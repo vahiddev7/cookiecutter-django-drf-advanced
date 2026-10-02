@@ -19,8 +19,8 @@ pillow==12.2.0
 requests==2.33.1
 persiantools==5.5.0
 
-{% if cookiecutter.use_swagger == 'y' -%}
-drf-spectacular
+{% if cookiecutter.use_drf == 'y' and cookiecutter.use_swagger == 'y' -%}
+drf-spectacular==0.29.0
 {%- endif %}
 
 {% if cookiecutter.database_engine == 'mysql' %}
