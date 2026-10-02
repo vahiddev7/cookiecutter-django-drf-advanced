@@ -62,7 +62,7 @@ DATABASES["default"].update({
 })
 {% elif cookiecutter.database_engine == "sqlserver" %}
 DATABASES["default"].update({
-    "ENGINE": "sql_server.pyodbc",
+    "ENGINE": "mssql",
     "NAME": env("DB_NAME"),
     "USER": env("DB_USER"),
     "PASSWORD": env("DB_PASSWORD"),
