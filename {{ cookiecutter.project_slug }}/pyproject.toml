@@ -18,9 +18,9 @@ persiantools = "5.5.0"
 {% if cookiecutter.database_engine == "postgresql" %}
 psycopg2-binary = "2.9.11"
 {% elif cookiecutter.database_engine == "mysql" %}
-pymysql = "1.1.2"
+pymysql = "1.2.3"
 {% elif cookiecutter.database_engine == "sqlserver" %}
-django-mssql-backend = "2.8.1"
+mssql-django = "2.0.0"
 {% endif %}
 
 {% if cookiecutter.use_drf == "y" %}
