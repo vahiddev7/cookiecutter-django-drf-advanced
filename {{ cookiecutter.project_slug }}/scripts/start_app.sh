@@ -41,7 +41,58 @@ EOF
 for package in models services selectors serializers permissions migrations views views/api views/api/v1; do
   touch "${APP_FULL_PATH}/${package}/__init__.py"
 done
-touch "${APP_FULL_PATH}/admin.py" "${APP_FULL_PATH}/urls.py"
+touch "${APP_FULL_PATH}/admin.py"
+cat > "${APP_FULL_PATH}/urls.py" <<EOF
+urlpatterns = []
+EOF
+
+# Register the generated app and expose its URL module under /api/<app_name>/.
+python - "${PROJECT_ROOT}" "${APP_NAME}" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+project_root = Path(sys.argv[1])
+app_name = sys.argv[2]
+
+settings_path = project_root / "config" / "settings" / "base.py"
+settings_text = settings_path.read_text(encoding="utf-8")
+app_config = f'"apps.{app_name}"'
+if app_config not in settings_text:
+    settings_text, count = re.subn(
+        r"(INSTALLED_APPS\\s*=\\s*\\[)",
+        lambda match: f'{match.group(1)}\\n    {app_config},',
+        settings_text,
+        count=1,
+    )
+    if count != 1:
+        raise SystemExit(f"Could not find INSTALLED_APPS in {settings_path}")
+    settings_path.write_text(settings_text, encoding="utf-8")
+
+urls_path = project_root / "config" / "urls.py"
+urls_text = urls_path.read_text(encoding="utf-8")
+if "from django.urls import include, path" not in urls_text:
+    if "from django.urls import path" in urls_text:
+        urls_text = urls_text.replace(
+            "from django.urls import path",
+            "from django.urls import include, path",
+            1,
+        )
+    else:
+        urls_text = "from django.urls import include, path\\n" + urls_text
+
+route = f'path("api/{app_name}/", include("apps.{app_name}.urls"))'
+if route not in urls_text:
+    urls_text, count = re.subn(
+        r"(urlpatterns\\s*=\\s*\\[)",
+        lambda match: f'{match.group(1)}\\n    {route},',
+        urls_text,
+        count=1,
+    )
+    if count != 1:
+        raise SystemExit(f"Could not find urlpatterns in {urls_path}")
+    urls_path.write_text(urls_text, encoding="utf-8")
+PY
 
 TEST_ROOT="${APP_FULL_PATH}/tests"
 touch "${APP_FULL_PATH}/tests/__init__.py"
@@ -56,4 +107,5 @@ done
 
 echo "Created app '${APP_NAME}' at ${APP_FULL_PATH}"
 echo "Test layout created under ${TEST_ROOT}"
-echo "Add apps.${APP_NAME} to INSTALLED_APPS, then define models and run migrations."
+echo "Registered apps.${APP_NAME} and /api/${APP_NAME}/ in project settings."
+echo "Define models and run migrations before using database-backed features."
