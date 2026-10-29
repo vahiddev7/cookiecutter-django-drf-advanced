@@ -51,6 +51,8 @@ jobs:
           bash scripts/start_app.sh blog
           python manage.py check
           python - <<'PY'
+          import django
+          django.setup()
           from django.conf import settings
           from django.urls import get_resolver
 
