@@ -72,25 +72,24 @@ services:
       - {{ cookiecutter.project_slug }}_network
   {% endif %}
 
-  app:
+  migrate:
     build:
       context: .
       dockerfile: docker/production/Dockerfile
-    container_name: {{ cookiecutter.project_slug }}_app
-    restart: unless-stopped
+    command: sh -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+    container_name: {{ cookiecutter.project_slug }}_migrate
     env_file:
       - .env
-    {% if cookiecutter.database_engine != 'sqlite' %}
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.prod
+      {% if cookiecutter.database_engine != 'sqlite' %}
       DB_HOST: db
       {% if cookiecutter.database_engine == 'sqlserver' %}
       DB_USER: sa
       {% endif %}
-    {% endif %}
+      {% endif %}
     volumes:
       - static_data:/app/staticfiles
-      - media_data:/app/media
     {% if cookiecutter.database_engine == 'sqlserver' %}
     depends_on:
       db-init:
@@ -100,6 +99,32 @@ services:
       db:
         condition: service_healthy
     {% endif %}
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  app:
+    build:
+      context: .
+      dockerfile: docker/production/Dockerfile
+    container_name: {{ cookiecutter.project_slug }}_app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+      {% if cookiecutter.database_engine != 'sqlite' %}
+      DB_HOST: db
+      {% if cookiecutter.database_engine == 'sqlserver' %}
+      DB_USER: sa
+      {% endif %}
+      {% endif %}
+    volumes:
+      - static_data:/app/staticfiles
+      - media_data:/app/media
+    command: gunicorn --bind 0.0.0.0:8000 config.wsgi:application
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
     networks:
       - {{ cookiecutter.project_slug }}_network
 
@@ -159,6 +184,7 @@ services:
     env_file:
       - .env
     environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
       RUN_MIGRATIONS: "false"
       RUN_COLLECTSTATIC: "false"
       {% if cookiecutter.database_engine != 'sqlite' %}
@@ -170,16 +196,22 @@ services:
     depends_on:
       db-init:
         condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
       broker:
         condition: service_healthy
     {% elif cookiecutter.database_engine != 'sqlite' %}
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       broker:
         condition: service_healthy
     {% else %}
     depends_on:
+      migrate:
+        condition: service_completed_successfully
       broker:
         condition: service_healthy
     {% endif %}
