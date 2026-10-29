@@ -136,8 +136,8 @@ services:
   broker:
     image: rabbitmq:3-management-alpine
     environment:
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:-app}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-app}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER:?Set a unique RABBITMQ_DEFAULT_USER in .env}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:?Set a strong RABBITMQ_DEFAULT_PASS in .env}
     container_name: {{ cookiecutter.project_slug }}_rabbitmq
     restart: unless-stopped
     healthcheck:
@@ -158,8 +158,10 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    {% if cookiecutter.database_engine != 'sqlite' %}
     environment:
+      RUN_MIGRATIONS: "false"
+      RUN_COLLECTSTATIC: "false"
+      {% if cookiecutter.database_engine != 'sqlite' %}
       DB_HOST: db
     {% endif %}
     volumes:
