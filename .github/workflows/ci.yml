@@ -61,7 +61,7 @@ jobs:
 
       - name: Reject wildcard ALLOWED_HOSTS default
         run: |
-          if grep -Eq '^ALLOWED_HOSTS=\\*$' '{{ cookiecutter.project_slug }}/.env.example'; then
+          if grep -Fxq 'ALLOWED_HOSTS=*' '{{ cookiecutter.project_slug }}/.env.example'; then
             echo "Unsafe wildcard ALLOWED_HOSTS default found in .env.example" >&2
             exit 1
           fi
