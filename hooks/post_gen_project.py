@@ -1,6 +1,7 @@
 from pathlib import Path
 import secrets
 import shutil
+import string
 
 project_dir = Path.cwd()
 database_engine = "{{ cookiecutter.database_engine }}"
@@ -15,7 +16,18 @@ if not env_file.exists() and env_example.exists():
     secret_key = secrets.token_urlsafe(48)
     content = content.replace("SECRET_KEY=\n", f"SECRET_KEY={secret_key}\n", 1)
 
-    database_password = secrets.token_urlsafe(24)
+    password_characters = [
+        secrets.choice(string.ascii_uppercase),
+        secrets.choice(string.ascii_lowercase),
+        secrets.choice(string.digits),
+        secrets.choice("_-"),
+    ]
+    password_alphabet = string.ascii_letters + string.digits + "_-"
+    password_characters.extend(
+        secrets.choice(password_alphabet) for _ in range(28)
+    )
+    secrets.SystemRandom().shuffle(password_characters)
+    database_password = "".join(password_characters)
     database_settings = {
         "postgresql": {
             "DB_NAME": project_slug,
