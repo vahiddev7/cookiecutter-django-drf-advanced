@@ -112,6 +112,8 @@ cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced
 docker compose up --build
 ```
 
+Cookiecutter creates a local `.env` from `.env.example` after generation and fills in a fresh Django `SECRET_KEY`. It never overwrites an existing `.env`. Before starting Docker, review the database values in `.env` for the selected database engine. The generated `.env` is ignored by Git and should not be committed.
+
 ---
 
 ## 📁 Project Structure

@@ -1,0 +1,77 @@
+name: Generated environment bootstrap
+
+on:
+  pull_request:
+    paths:
+      - "hooks/post_gen_project.py"
+      - "{{ cookiecutter.project_slug }}/.env.example"
+      - ".github/workflows/environment-bootstrap.yml"
+  push:
+    branches: ["master"]
+    paths:
+      - "hooks/post_gen_project.py"
+      - "{{ cookiecutter.project_slug }}/.env.example"
+
+jobs:
+  generated-environment:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        database_engine: [sqlite, postgresql, mysql, sqlserver]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Cookiecutter
+        run: python -m pip install --upgrade pip cookiecutter
+
+      - name: Generate project
+        run: >-
+          cookiecutter --no-input . --output-dir "$RUNNER_TEMP/generated"
+          project_name="Bootstrap Test"
+          project_slug=bootstrap_test
+          author_name=CI
+          use_drf=y
+          use_swagger=n
+          use_docker=n
+          database_engine=${{ matrix.database_engine }}
+          use_celery=n
+          celery_broker=redis
+
+      - name: Validate generated environment
+        env:
+          DATABASE_ENGINE: ${{ matrix.database_engine }}
+          PROJECT_DIR: ${{ runner.temp }}/generated/bootstrap_test
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          project_dir = Path(os.environ["PROJECT_DIR"])
+          env_file = project_dir / ".env"
+          assert env_file.is_file(), "post-generation hook did not create .env"
+
+          values = {}
+          for line in env_file.read_text(encoding="utf-8").splitlines():
+              line = line.strip()
+              if line and not line.startswith("#") and "=" in line:
+                  key, value = line.split("=", 1)
+                  values[key] = value
+
+          assert values.get("SECRET_KEY"), "SECRET_KEY must be generated"
+          engine = os.environ["DATABASE_ENGINE"]
+          if engine != "sqlite":
+              for key in ("DB_NAME", "DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT"):
+                  assert values.get(key), f"{key} missing for {engine}"
+              password = values["DB_PASSWORD"]
+              assert any(c.isupper() for c in password)
+              assert any(c.islower() for c in password)
+              assert any(c.isdigit() for c in password)
+              assert any(c in "_-" for c in password)
+              if engine == "sqlserver":
+                  assert values["DB_USER"] == "sa"
+          PY
