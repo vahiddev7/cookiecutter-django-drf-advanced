@@ -33,7 +33,7 @@ jobs:
         run: >-
           cookiecutter --no-input . --output-dir "$RUNNER_TEMP/generated"
           project_name="Bootstrap Test"
-          project_slug=bootstrap_test
+          project_slug=bootstrap-test
           author_name=CI
           use_drf=y
           use_swagger=n
@@ -45,10 +45,11 @@ jobs:
       - name: Validate generated environment
         env:
           DATABASE_ENGINE: ${{ matrix.database_engine }}
-          PROJECT_DIR: ${{ runner.temp }}/generated/bootstrap_test
+          PROJECT_DIR: ${{ runner.temp }}/generated/bootstrap-test
         run: |
           python - <<'PY'
           import os
+          import re
           from pathlib import Path
 
           project_dir = Path(os.environ["PROJECT_DIR"])
@@ -74,4 +75,6 @@ jobs:
               assert any(c in "_-" for c in password)
               if engine == "sqlserver":
                   assert values["DB_USER"] == "sa"
+                  assert values["DB_NAME"] == "bootstrap_test"
+                  assert re.fullmatch(r"[A-Za-z0-9_]+", values["DB_NAME"])
           PY
