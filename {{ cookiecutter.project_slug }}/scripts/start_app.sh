@@ -95,6 +95,7 @@ if route not in urls_text:
 PY
 
 TEST_ROOT="${APP_FULL_PATH}/tests"
+mkdir -p "${TEST_ROOT}"
 touch "${APP_FULL_PATH}/tests/__init__.py"
 for category in apis models permissions selectors serializers services; do
   mkdir -p "${TEST_ROOT}/${category}"
