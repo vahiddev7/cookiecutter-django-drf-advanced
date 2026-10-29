@@ -1,5 +1,6 @@
 from pathlib import Path
 import secrets
+import re
 import shutil
 import string
 
@@ -28,10 +29,11 @@ if not env_file.exists() and env_example.exists():
     )
     secrets.SystemRandom().shuffle(password_characters)
     database_password = "".join(password_characters)
+    database_identifier = re.sub(r"[^A-Za-z0-9_]", "_", project_slug)
     database_settings = {
         "postgresql": {
-            "DB_NAME": project_slug,
-            "DB_USER": project_slug,
+            "DB_NAME": database_identifier,
+            "DB_USER": database_identifier,
             "DB_PASSWORD": database_password,
             "DB_HOST": "localhost",
             "DB_PORT": "5432",
