@@ -39,8 +39,8 @@ if not env_file.exists() and env_example.exists():
             "DB_PORT": "5432",
         },
         "mysql": {
-            "DB_NAME": project_slug,
-            "DB_USER": project_slug,
+            "DB_NAME": database_identifier,
+            "DB_USER": database_identifier,
             "DB_PASSWORD": database_password,
             "DB_HOST": "localhost",
             "DB_PORT": "3306",
