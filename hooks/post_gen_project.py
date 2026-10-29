@@ -8,6 +8,11 @@ project_dir = Path.cwd()
 database_engine = "{{ cookiecutter.database_engine }}"
 project_slug = "{{ cookiecutter.project_slug }}"
 
+# SQL Server's initialization script only accepts ASCII letters, digits and
+# underscores for the database name. Keep all generated database identifiers
+# consistent across engines.
+database_identifier = re.sub(r"[^A-Za-z0-9_]", "_", project_slug)
+
 # Give each generated project a usable local environment without overwriting
 # an existing .env file or copying real credentials into version control.
 env_file = project_dir / ".env"
@@ -29,7 +34,6 @@ if not env_file.exists() and env_example.exists():
     )
     secrets.SystemRandom().shuffle(password_characters)
     database_password = "".join(password_characters)
-    database_identifier = re.sub(r"[^A-Za-z0-9_]", "_", project_slug)
     database_settings = {
         "postgresql": {
             "DB_NAME": database_identifier,
@@ -46,7 +50,7 @@ if not env_file.exists() and env_example.exists():
             "DB_PORT": "3306",
         },
         "sqlserver": {
-            "DB_NAME": project_slug,
+            "DB_NAME": database_identifier,
             "DB_USER": "sa",
             "DB_PASSWORD": database_password,
             "DB_HOST": "localhost",
