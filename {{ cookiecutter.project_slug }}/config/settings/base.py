@@ -70,7 +70,7 @@ DATABASES["default"].update({
     "PORT": env("DB_PORT"),
     "OPTIONS": {
         "driver": "ODBC Driver 18 for SQL Server",
-        "extra_params": "TrustServerCertificate=yes",
+        "extra_params": f"TrustServerCertificate={'yes' if env.bool('DB_TRUST_SERVER_CERTIFICATE', default=False) else 'no'}",
     },
 })
 {% endif %}
