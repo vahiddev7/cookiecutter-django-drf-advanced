@@ -60,8 +60,8 @@ settings_text = settings_path.read_text(encoding="utf-8")
 app_config = f'"apps.{app_name}"'
 if app_config not in settings_text:
     settings_text, count = re.subn(
-        r"(INSTALLED_APPS\\s*=\\s*\\[)",
-        lambda match: f'{match.group(1)}\\n    {app_config},',
+        r"(INSTALLED_APPS\s*=\s*\\[)",
+        lambda match: f'{match.group(1)}\n    {app_config},',
         settings_text,
         count=1,
     )
@@ -79,13 +79,13 @@ if "from django.urls import include, path" not in urls_text:
             1,
         )
     else:
-        urls_text = "from django.urls import include, path\\n" + urls_text
+        urls_text = "from django.urls import include, path\n" + urls_text
 
 route = f'path("api/{app_name}/", include("apps.{app_name}.urls"))'
 if route not in urls_text:
     urls_text, count = re.subn(
-        r"(urlpatterns\\s*=\\s*\\[)",
-        lambda match: f'{match.group(1)}\\n    {route},',
+        r"(urlpatterns\s*=\s*\\[)",
+        lambda match: f'{match.group(1)}\n    {route},',
         urls_text,
         count=1,
     )
