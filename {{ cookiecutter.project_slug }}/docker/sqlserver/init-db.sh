@@ -3,6 +3,10 @@ set -Eeuo pipefail
 
 : "${DB_NAME:?DB_NAME must be set in .env}"
 : "${DB_PASSWORD:?DB_PASSWORD must be set in .env}"
+if [[ ! "${DB_NAME}" =~ ^[A-Za-z0-9_]+$ ]]; then
+  echo "DB_NAME may contain only letters, numbers, and underscores." >&2
+  exit 2
+fi
 
 SQLCMD="/opt/mssql-tools18/bin/sqlcmd"
 until "$SQLCMD" -S db -U sa -P "$DB_PASSWORD" -C -Q "SELECT 1" >/dev/null 2>&1; do
