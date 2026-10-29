@@ -80,16 +80,16 @@ services:
     container_name: {{ cookiecutter.project_slug }}_migrate
     env_file:
       - .env
-    volumes:
-      - static_data:/app/staticfiles
-    {% if cookiecutter.database_engine != 'sqlite' %}
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.prod
+      {% if cookiecutter.database_engine != 'sqlite' %}
       DB_HOST: db
       {% if cookiecutter.database_engine == 'sqlserver' %}
       DB_USER: sa
       {% endif %}
-    {% endif %}
+      {% endif %}
+    volumes:
+      - static_data:/app/staticfiles
     {% if cookiecutter.database_engine == 'sqlserver' %}
     depends_on:
       db-init:
@@ -110,14 +110,14 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    {% if cookiecutter.database_engine != 'sqlite' %}
     environment:
       DJANGO_SETTINGS_MODULE: config.settings.prod
+      {% if cookiecutter.database_engine != 'sqlite' %}
       DB_HOST: db
       {% if cookiecutter.database_engine == 'sqlserver' %}
       DB_USER: sa
       {% endif %}
-    {% endif %}
+      {% endif %}
     volumes:
       - static_data:/app/staticfiles
       - media_data:/app/media
@@ -184,6 +184,7 @@ services:
     env_file:
       - .env
     environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
       RUN_MIGRATIONS: "false"
       RUN_COLLECTSTATIC: "false"
       {% if cookiecutter.database_engine != 'sqlite' %}
