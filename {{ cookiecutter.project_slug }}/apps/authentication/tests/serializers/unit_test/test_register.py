@@ -3,6 +3,7 @@ import pytest
 from apps.authentication.serializers.register import RegisterSerializer
 
 
+@pytest.mark.django_db
 def test_registration_requires_email():
     serializer = RegisterSerializer(
         data={
