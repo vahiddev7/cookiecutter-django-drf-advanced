@@ -1,0 +1,59 @@
+name: App generator smoke test
+
+on:
+  pull_request:
+    paths:
+      - "{{ cookiecutter.project_slug }}/scripts/start_app.sh"
+      - ".github/workflows/app-generator.yml"
+  workflow_dispatch:
+
+jobs:
+  generated-app:
+    runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ci-only-secret-key-never-use-in-production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Cookiecutter
+        run: python -m pip install --upgrade pip cookiecutter
+
+      - name: Generate a minimal project
+        run: >-
+          cookiecutter --no-input . --output-dir "$RUNNER_TEMP/generated"
+          project_name="App Generator Test"
+          project_slug=app_generator_test
+          author_name=CI
+          use_drf=y
+          use_swagger=n
+          use_docker=n
+          database_engine=sqlite
+          use_celery=n
+          celery_broker=redis
+
+      - name: Install runtime dependencies
+        working-directory: ${{ runner.temp }}/generated/app_generator_test
+        run: >-
+          python -m pip install
+          Django==5.2.13
+          django-environ==0.13.0
+          djangorestframework==3.17.1
+          djangorestframework-simplejwt==5.5.1
+
+      - name: Generate and validate an app
+        working-directory: ${{ runner.temp }}/generated/app_generator_test
+        run: |
+          bash scripts/start_app.sh blog
+          python manage.py check
+          python - <<'PY'
+          from django.conf import settings
+          from django.urls import get_resolver
+
+          assert "apps.blog" in settings.INSTALLED_APPS
+          patterns = get_resolver().url_patterns
+          assert any(str(pattern.pattern) == "api/blog/" for pattern in patterns)
+          PY
