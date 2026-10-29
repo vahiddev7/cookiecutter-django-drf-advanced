@@ -44,3 +44,35 @@ def test_registration_rejects_duplicate_username():
 
     assert response.status_code == 400
     assert "username" in response.data
+
+@pytest.mark.django_db
+def test_login_returns_jwt_pair_for_valid_credentials():
+    get_user_model().objects.create_user(
+        username="login-user",
+        email="login@example.com",
+        password="Unique-Strong-Password-927!",
+    )
+
+    response = APIClient().post(
+        "/api/auth/login/",
+        {
+            "username": "login-user",
+            "password": "Unique-Strong-Password-927!",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 200
+    assert "access" in response.data
+    assert "refresh" in response.data
+
+
+@pytest.mark.django_db
+def test_login_rejects_invalid_credentials():
+    response = APIClient().post(
+        "/api/auth/login/",
+        {"username": "missing-user", "password": "not-the-password"},
+        format="json",
+    )
+
+    assert response.status_code == 401
