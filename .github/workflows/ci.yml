@@ -3,21 +3,65 @@ name: Generated project CI
 on:
   pull_request:
   push:
-    branches: ["master"]
+    branches: ["master", "ci/**"]
   workflow_dispatch:
 
 jobs:
   generated-project:
     runs-on: ubuntu-latest
-    env:
-      SECRET_KEY: ci-only-secret-key-never-use-in-production
-      DJANGO_SETTINGS_MODULE: config.settings.dev
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: sqlite-drf-minimal
+            database_engine: sqlite
+            use_drf: y
+            use_swagger: n
+            use_docker: n
+            use_celery: n
+            celery_broker: redis
+          - name: sqlite-full-options
+            database_engine: sqlite
+            use_drf: y
+            use_swagger: y
+            use_docker: y
+            use_celery: y
+            celery_broker: redis
+          - name: sqlite-without-drf
+            database_engine: sqlite
+            use_drf: n
+            use_swagger: n
+            use_docker: y
+            use_celery: y
+            celery_broker: rabbitmq
+          - name: postgresql-rabbitmq
+            database_engine: postgresql
+            use_drf: y
+            use_swagger: n
+            use_docker: y
+            use_celery: y
+            celery_broker: rabbitmq
+          - name: mysql-swagger
+            database_engine: mysql
+            use_drf: y
+            use_swagger: y
+            use_docker: y
+            use_celery: n
+            celery_broker: redis
+          - name: sqlserver-redis
+            database_engine: sqlserver
+            use_drf: y
+            use_swagger: n
+            use_docker: y
+            use_celery: y
+            celery_broker: redis
+
     steps:
       - uses: actions/checkout@v4
 
       - name: Reject wildcard ALLOWED_HOSTS default
         run: |
-          if grep -Eq '^ALLOWED_HOSTS=\*$' '{{ cookiecutter.project_slug }}/.env.example'; then
+          if grep -Eq '^ALLOWED_HOSTS=\\*$' '{{ cookiecutter.project_slug }}/.env.example'; then
             echo "Unsafe wildcard ALLOWED_HOSTS default found in .env.example" >&2
             exit 1
           fi
@@ -25,47 +69,47 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
 
       - name: Install Cookiecutter
         run: python -m pip install --upgrade pip cookiecutter
 
-      - name: Generate a minimal SQLite project
+      - name: Generate project (${{ matrix.name }})
         run: >-
           cookiecutter --no-input . --output-dir "$RUNNER_TEMP/generated"
           project_name="CI Test Project"
           project_slug=ci_test_project
           author_name=CI
-          use_drf=y
-          use_swagger=n
-          use_docker=n
-          database_engine=sqlite
-          use_celery=n
-          celery_broker=redis
+          use_drf=${{ matrix.use_drf }}
+          use_swagger=${{ matrix.use_swagger }}
+          use_docker=${{ matrix.use_docker }}
+          database_engine=${{ matrix.database_engine }}
+          use_celery=${{ matrix.use_celery }}
+          celery_broker=${{ matrix.celery_broker }}
 
-      - name: Install project test dependencies
+      - name: Install generated project dependencies
         working-directory: ${{ runner.temp }}/generated/ci_test_project
-        run: >-
-          python -m pip install
-          Django==5.2.13
-          django-environ==0.13.0
-          djangorestframework==3.17.1
-          djangorestframework-simplejwt==5.5.1
-          pytest
-          pytest-django
+        run: python -m pip install -r requirements/base.txt pytest pytest-django
 
       - name: Django system checks
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python manage.py check
 
+      - name: Validate Docker Compose configuration
+        if: matrix.use_docker == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: docker compose config --quiet
+
       - name: Check migrations
+        if: matrix.database_engine == 'sqlite'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python manage.py makemigrations --check --dry-run
 
       - name: Apply migrations
+        if: matrix.database_engine == 'sqlite'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python manage.py migrate --noinput
 
-      - name: Run tests
+      - name: Run project tests
+        if: matrix.database_engine == 'sqlite' && matrix.use_drf == 'y'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: pytest -q
