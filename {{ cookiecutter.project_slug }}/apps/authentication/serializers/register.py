@@ -6,6 +6,7 @@ from apps.authentication.services.register import register_user
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True, trim_whitespace=False)
 
     class Meta:
