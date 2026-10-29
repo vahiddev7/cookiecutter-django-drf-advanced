@@ -153,6 +153,8 @@ apps/blog/
   tests/
 ```
 
+The script also adds `apps.<app_name>` to `INSTALLED_APPS` and includes the app's URL module under `/api/<app_name>/`. Add endpoint patterns to `apps/<app_name>/urls.py`, then define models and run migrations as needed.
+
 ---
 
 ## 🔐 Authentication Included
