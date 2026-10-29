@@ -9,6 +9,9 @@ on:
 jobs:
   generated-project:
     runs-on: ubuntu-latest
+    env:
+      RABBITMQ_DEFAULT_USER: ci_rabbitmq_user
+      RABBITMQ_DEFAULT_PASS: ci-only-long-random-looking-password
     strategy:
       fail-fast: false
       matrix:
@@ -92,17 +95,11 @@ jobs:
 
       - name: Django system checks
         working-directory: ${{ runner.temp }}/generated/ci_test_project
-        env:
-          RABBITMQ_DEFAULT_USER: ci_rabbitmq_user
-          RABBITMQ_DEFAULT_PASS: ci-only-long-random-looking-password
         run: python manage.py check
 
       - name: Validate Docker Compose configuration
         if: matrix.use_docker == 'y'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
-        env:
-          RABBITMQ_DEFAULT_USER: ci_rabbitmq_user
-          RABBITMQ_DEFAULT_PASS: ci-only-long-random-looking-password
         run: docker compose config --quiet
 
       - name: Check migrations
