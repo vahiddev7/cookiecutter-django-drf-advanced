@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       SECRET_KEY: ci-only-secret-key-never-use-in-production
+      DJANGO_SETTINGS_MODULE: config.settings.dev
     steps:
       - uses: actions/checkout@v4
 
