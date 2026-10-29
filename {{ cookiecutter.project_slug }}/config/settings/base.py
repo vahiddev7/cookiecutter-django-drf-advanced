@@ -37,9 +37,10 @@ INSTALLED_APPS = [
 DATABASES = {"default": {}}
 
 {% if cookiecutter.database_engine == "sqlite" %}
+os.makedirs(BASE_DIR / "data", exist_ok=True)
 DATABASES["default"].update({
     "ENGINE": "django.db.backends.sqlite3",
-    "NAME": BASE_DIR / "db.sqlite3",
+    "NAME": BASE_DIR / "data" / "db.sqlite3",
 })
 {% elif cookiecutter.database_engine == "postgresql" %}
 DATABASES["default"].update({
@@ -149,7 +150,12 @@ SPECTACULAR_SETTINGS = {
 CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://broker:6379/0")
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://broker:6379/0")
 {% else %}
-CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="amqp://app:app@broker:5672//")
+from urllib.parse import quote
+
+CELERY_BROKER_URL = env("CELERY_BROKER_URL", default=None) or (
+    f"amqp://{quote(env('RABBITMQ_DEFAULT_USER'), safe='')}:"
+    f"{quote(env('RABBITMQ_DEFAULT_PASS'), safe='')}@broker:5672//"
+)
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="rpc://")
 {% endif %}
 CELERY_ACCEPT_CONTENT = ["json"]
