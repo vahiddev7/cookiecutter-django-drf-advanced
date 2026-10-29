@@ -313,3 +313,10 @@ tests/
 Use unit tests for isolated behavior, integration tests for interactions with the database or
 other components, and end-to-end tests for complete request flows. Run tests from the
 generated project root with `pytest`.
+
+
+### Docker Compose network exposure and HTTPS
+
+The production Compose template publishes only Nginx on host port `80`. The application, database, and Celery broker services communicate over the private Compose network; their ports are not published directly to the host. This avoids exposing database listeners, Gunicorn, or the RabbitMQ management UI on every host interface by default.
+
+For production deployments, terminate HTTPS at a trusted reverse proxy or load balancer and forward traffic to Nginx. Do not expose the HTTP endpoint publicly without an appropriate TLS-terminating layer. If you need to access a database or the RabbitMQ management UI from your own machine for development, use a separate local-only Compose override that binds the required port to `127.0.0.1`, and do not use that override in production.
