@@ -49,6 +49,7 @@ jobs:
         run: |
           python - <<'PY'
           import os
+          import re
           from pathlib import Path
 
           project_dir = Path(os.environ["PROJECT_DIR"])
@@ -74,4 +75,9 @@ jobs:
               assert any(c in "_-" for c in password)
               if engine == "sqlserver":
                   assert values["DB_USER"] == "sa"
+                  assert values["DB_NAME"] == "bootstrap_test"
+                  assert re.fullmatch(r"[A-Za-z0-9_]+", values["DB_NAME"])
+          # Regression case for slugs that contain punctuation: SQL Server
+          # initializer permits only letters, digits and underscores.
+          assert re.sub(r"[^A-Za-z0-9_]", "_", "my-project") == "my_project"
           PY
