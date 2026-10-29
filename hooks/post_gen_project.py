@@ -1,7 +1,6 @@
 from pathlib import Path
 import secrets
 import shutil
-import string
 
 project_dir = Path.cwd()
 
@@ -11,8 +10,7 @@ env_file = project_dir / ".env"
 env_example = project_dir / ".env.example"
 if not env_file.exists() and env_example.exists():
     content = env_example.read_text(encoding="utf-8")
-    alphabet = string.ascii_letters + string.digits + string.punctuation
-    secret_key = "".join(secrets.choice(alphabet) for _ in range(64))
+    secret_key = secrets.token_urlsafe(48)
     content = content.replace("SECRET_KEY=\n", f"SECRET_KEY={secret_key}\n", 1)
     env_file.write_text(content, encoding="utf-8")
 
