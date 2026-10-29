@@ -9,6 +9,8 @@ on:
 jobs:
   generated-project:
     runs-on: ubuntu-latest
+    env:
+      SECRET_KEY: ci-only-secret-key-never-use-in-production
     steps:
       - name: Check out template
         uses: actions/checkout@v4
