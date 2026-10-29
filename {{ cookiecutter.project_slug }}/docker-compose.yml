@@ -61,6 +61,23 @@ services:
       - {{ cookiecutter.project_slug }}_network
   {% endif %}
 
+  {% if cookiecutter.database_engine == 'sqlserver' %}
+  db-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: {{ cookiecutter.project_slug }}_sqlserver_init
+    entrypoint: ["/bin/bash", "/scripts/init-db.sh"]
+    environment:
+      DB_NAME: ${DB_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./docker/sqlserver/init-db.sh:/scripts/init-db.sh:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+  {% endif %}
+
   app:
     build:
       context: .
@@ -82,7 +99,11 @@ services:
       - media_data:/app/media
     ports:
       - "8000:8000"
-    {% if cookiecutter.database_engine != 'sqlite' %}
+    {% if cookiecutter.database_engine == 'sqlserver' %}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    {% elif cookiecutter.database_engine != 'sqlite' %}
     depends_on:
       db:
         condition: service_healthy
@@ -153,7 +174,13 @@ services:
     {% endif %}
     volumes:
       - media_data:/app/media
-    {% if cookiecutter.database_engine != 'sqlite' %}
+    {% if cookiecutter.database_engine == 'sqlserver' %}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+      broker:
+        condition: service_healthy
+    {% elif cookiecutter.database_engine != 'sqlite' %}
     depends_on:
       db:
         condition: service_healthy

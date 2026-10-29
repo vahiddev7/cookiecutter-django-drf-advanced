@@ -1,0 +1,55 @@
+name: Docker Compose template validation
+
+on:
+  pull_request:
+    paths:
+      - "{{ cookiecutter.project_slug }}/docker-compose.yml"
+      - "{{ cookiecutter.project_slug }}/docker/sqlserver/**"
+      - ".github/workflows/docker-compose-template.yml"
+  workflow_dispatch:
+
+jobs:
+  compose-config:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        database_engine: [sqlite, postgresql, mysql, sqlserver]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Cookiecutter
+        run: python -m pip install --upgrade pip cookiecutter
+
+      - name: Generate project
+        run: >-
+          cookiecutter --no-input . --output-dir "$RUNNER_TEMP/generated"
+          project_name="Compose Test"
+          project_slug=compose_test
+          author_name=CI
+          use_drf=y
+          use_swagger=n
+          use_docker=y
+          database_engine=${{ matrix.database_engine }}
+          use_celery=n
+          celery_broker=redis
+
+      - name: Configure Compose environment
+        working-directory: ${{ runner.temp }}/generated/compose_test
+        run: |
+          cat > .env <<'EOF'
+          SECRET_KEY=ci-only-secret-key-never-use-in-production
+          DB_NAME=compose_test
+          DB_USER=sa
+          DB_PASSWORD=Strong-Password-927!
+          DB_HOST=localhost
+          DB_PORT=1433
+          EOF
+
+      - name: Validate rendered Compose configuration
+        working-directory: ${{ runner.temp }}/generated/compose_test
+        run: docker compose config --quiet
