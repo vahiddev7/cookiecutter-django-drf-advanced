@@ -72,6 +72,36 @@ services:
       - {{ cookiecutter.project_slug }}_network
   {% endif %}
 
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/production/Dockerfile
+    command: sh -c "python manage.py migrate --noinput && python manage.py collectstatic --noinput"
+    container_name: {{ cookiecutter.project_slug }}_migrate
+    env_file:
+      - .env
+    volumes:
+      - static_data:/app/staticfiles
+    {% if cookiecutter.database_engine != 'sqlite' %}
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+      DB_HOST: db
+      {% if cookiecutter.database_engine == 'sqlserver' %}
+      DB_USER: sa
+      {% endif %}
+    {% endif %}
+    {% if cookiecutter.database_engine == 'sqlserver' %}
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    {% elif cookiecutter.database_engine != 'sqlite' %}
+    depends_on:
+      db:
+        condition: service_healthy
+    {% endif %}
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
   app:
     build:
       context: .
@@ -91,15 +121,10 @@ services:
     volumes:
       - static_data:/app/staticfiles
       - media_data:/app/media
-    {% if cookiecutter.database_engine == 'sqlserver' %}
+    command: gunicorn --bind 0.0.0.0:8000 config.wsgi:application
     depends_on:
-      db-init:
+      migrate:
         condition: service_completed_successfully
-    {% elif cookiecutter.database_engine != 'sqlite' %}
-    depends_on:
-      db:
-        condition: service_healthy
-    {% endif %}
     networks:
       - {{ cookiecutter.project_slug }}_network
 
@@ -170,16 +195,22 @@ services:
     depends_on:
       db-init:
         condition: service_completed_successfully
+      migrate:
+        condition: service_completed_successfully
       broker:
         condition: service_healthy
     {% elif cookiecutter.database_engine != 'sqlite' %}
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
       broker:
         condition: service_healthy
     {% else %}
     depends_on:
+      migrate:
+        condition: service_completed_successfully
       broker:
         condition: service_healthy
     {% endif %}
