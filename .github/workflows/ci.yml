@@ -92,6 +92,9 @@ jobs:
 
       - name: Django system checks
         working-directory: ${{ runner.temp }}/generated/ci_test_project
+        env:
+          RABBITMQ_DEFAULT_USER: ci_rabbitmq_user
+          RABBITMQ_DEFAULT_PASS: ci-only-long-random-looking-password
         run: python manage.py check
 
       - name: Validate Docker Compose configuration
