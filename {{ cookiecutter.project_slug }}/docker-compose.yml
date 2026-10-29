@@ -4,8 +4,6 @@ services:
     image: postgres:17
     container_name: {{ cookiecutter.project_slug }}_postgres
     restart: unless-stopped
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -24,8 +22,6 @@ services:
     image: mysql:8.0
     container_name: {{ cookiecutter.project_slug }}_mysql
     restart: unless-stopped
-    ports:
-      - "3306:3306"
     environment:
       MYSQL_DATABASE: ${DB_NAME}
       MYSQL_USER: ${DB_USER}
@@ -45,8 +41,6 @@ services:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: {{ cookiecutter.project_slug }}_sqlserver
     restart: unless-stopped
-    ports:
-      - "1433:1433"
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD: ${DB_PASSWORD}
@@ -97,8 +91,6 @@ services:
     volumes:
       - static_data:/app/staticfiles
       - media_data:/app/media
-    ports:
-      - "8000:8000"
     {% if cookiecutter.database_engine == 'sqlserver' %}
     depends_on:
       db-init:
@@ -148,8 +140,6 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS:-app}
     container_name: {{ cookiecutter.project_slug }}_rabbitmq
     restart: unless-stopped
-    ports:
-      - "15672:15672"
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
