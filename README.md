@@ -330,3 +330,10 @@ Cross-origin browser access is disabled by default. If a separate frontend needs
 `CSRF_TRUSTED_ORIGINS` is a separate Django setting. Configure it only when a trusted frontend needs to submit cookie/session-authenticated unsafe requests across origins; list full origins including `https://`. CORS permission does not grant CSRF trust, and CSRF trust does not grant CORS access.
 
 Keep `CORS_ALLOW_CREDENTIALS=False` unless the browser must send cookies or other credentials cross-origin. When credentials are enabled, continue using explicit origins and normal CSRF protections.
+
+
+### Default API permissions
+
+When Django REST Framework is enabled, API views require an authenticated user by default through `IsAuthenticated`. This is a secure baseline for new endpoints: explicitly use `AllowAny` only for intentionally public views.
+
+The built-in registration, login, and JWT refresh endpoints are explicitly public because they must be reachable before a user has an access token. Keep authorization decisions close to each view and add object-level permissions where users must only access their own resources.
