@@ -96,6 +96,7 @@ jobs:
           USE_DRF: ${{ matrix.use_drf }}
           USE_SWAGGER: ${{ matrix.use_swagger }}
           USE_CELERY: ${{ matrix.use_celery }}
+          DATABASE_ENGINE: ${{ matrix.database_engine }}
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -110,6 +111,18 @@ jobs:
               assert not Path("config/celery.py").exists()
           else:
               assert Path("config/celery.py").is_file()
+
+          if os.environ["USE_DRF"] == "y":
+              from config.settings.base import INSTALLED_APPS, SIMPLE_JWT
+              blacklist_app = "rest_framework_simplejwt.token_blacklist"
+              if os.environ["DATABASE_ENGINE"] == "sqlserver":
+                  assert blacklist_app not in INSTALLED_APPS
+                  assert SIMPLE_JWT["ROTATE_REFRESH_TOKENS"] is False
+                  assert SIMPLE_JWT["BLACKLIST_AFTER_ROTATION"] is False
+              else:
+                  assert blacklist_app in INSTALLED_APPS
+                  assert SIMPLE_JWT["ROTATE_REFRESH_TOKENS"] is True
+                  assert SIMPLE_JWT["BLACKLIST_AFTER_ROTATION"] is True
 
           if os.environ["USE_DRF"] == "n" or os.environ["USE_SWAGGER"] == "n":
               assert not Path("static/swagger").exists()
