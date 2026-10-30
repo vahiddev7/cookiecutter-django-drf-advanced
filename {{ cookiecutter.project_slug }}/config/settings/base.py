@@ -16,12 +16,18 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 
+# Cross-origin access is disabled unless explicit origins are configured.
+CORS_ALLOWED_ORIGINS = env.list("CORS_ALLOWED_ORIGINS", default=[])
+CORS_ALLOW_CREDENTIALS = env.bool("CORS_ALLOW_CREDENTIALS", default=False)
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "corsheaders",
     "django.contrib.staticfiles",
     {% if cookiecutter.use_drf == "y" %}
     "rest_framework_simplejwt.token_blacklist",
@@ -107,6 +113,7 @@ TEMPLATES = [{
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
