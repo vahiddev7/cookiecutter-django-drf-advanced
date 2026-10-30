@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "corsheaders",
     "django.contrib.staticfiles",
-    {% if cookiecutter.use_drf == "y" %}
+    {% if cookiecutter.use_drf == "y" and cookiecutter.database_engine != "sqlserver" %}
     "rest_framework_simplejwt.token_blacklist",
     {% endif %}
     {% if cookiecutter.use_drf == "y" %}
@@ -152,8 +152,15 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    {% if cookiecutter.database_engine == "sqlserver" %}
+    # mssql-django cannot alter AutoField to BigAutoField, as required by
+    # SimpleJWT's token blacklist migration 0008.
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": False,
+    {% else %}
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
+    {% endif %}
 }
 {% endif %}
 
