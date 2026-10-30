@@ -24,6 +24,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     {% if cookiecutter.use_drf == "y" %}
+    "rest_framework_simplejwt.token_blacklist",
+    {% endif %}
+    {% if cookiecutter.use_drf == "y" %}
     "rest_framework",
     "apps.authentication",
     {% endif %}
@@ -139,6 +142,8 @@ REST_FRAMEWORK = {
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
 }
 {% endif %}
 
