@@ -90,6 +90,33 @@ jobs:
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python -m pip install -r requirements/base.txt pytest pytest-django
 
+      - name: Verify optional feature output
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        env:
+          USE_DRF: ${{ matrix.use_drf }}
+          USE_SWAGGER: ${{ matrix.use_swagger }}
+          USE_CELERY: ${{ matrix.use_celery }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os
+
+          if os.environ["USE_DRF"] == "n":
+              assert not Path("apps/authentication").exists()
+          else:
+              assert Path("apps/authentication").is_dir()
+
+          if os.environ["USE_CELERY"] == "n":
+              assert not Path("config/celery.py").exists()
+          else:
+              assert Path("config/celery.py").is_file()
+
+          if os.environ["USE_DRF"] == "n" or os.environ["USE_SWAGGER"] == "n":
+              assert not Path("static/swagger").exists()
+          else:
+              assert Path("static/swagger").is_dir()
+          PY
+
       - name: Django system checks
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python manage.py check
