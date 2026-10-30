@@ -13,13 +13,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("auth", "0012_alter_user_first_name_max_length"),
-        migrations.AddConstraint(
-            model_name="user",
-            constraint=models.CheckConstraint(
-                condition=models.Q(email=Lower(Trim("email"))),
-                name="users_email_normalized",
-            ),
-        ),
     ]
 
     operations = [
@@ -41,7 +34,7 @@ class Migration(migrations.Migration):
                 ("first_name", models.CharField(blank=True, max_length=150, verbose_name="first name")),
                 ("last_name", models.CharField(blank=True, max_length=150, verbose_name="last name")),
                 ("email", models.EmailField(max_length=254, unique=True, verbose_name="email address")),
-                ("is_staff", models.BooleanField(default=False, help_text="Designates whether the user can log into this admin site.", verbose_name="staff status")),
+                ("is_staff", models.BooleanField(default=False, help_text="Designates whether this user can log into this admin site.", verbose_name="staff status")),
                 ("is_active", models.BooleanField(default=True, help_text="Designates whether this user should be treated as active. Unselect this instead of deleting accounts.", verbose_name="active")),
                 ("date_joined", models.DateTimeField(default=django.utils.timezone.now, verbose_name="date joined")),
                 ("groups", models.ManyToManyField(
@@ -54,10 +47,10 @@ class Migration(migrations.Migration):
                 )),
                 ("user_permissions", models.ManyToManyField(
                     blank=True,
-                    help_text="Specific permissions for this user.",
+                    help_text="Specific permissions granted to each user.",
                     related_name="user_set",
                     related_query_name="user",
-                    to="auth.permission",
+                    to="auth.group",
                     verbose_name="user permissions",
                 )),
             ],
@@ -69,5 +62,12 @@ class Migration(migrations.Migration):
             managers=[
                 ("objects", django.contrib.auth.models.UserManager()),
             ],
+        ),
+        migrations.AddConstraint(
+            model_name="user",
+            constraint=models.CheckConstraint(
+                condition=models.Q(email=Lower(Trim("email"))),
+                name="users_email_normalized",
+            ),
         ),
     ]
