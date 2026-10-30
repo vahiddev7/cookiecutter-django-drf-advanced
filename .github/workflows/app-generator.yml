@@ -43,19 +43,26 @@ jobs:
       - name: Generate and validate an app
         working-directory: ${{ runner.temp }}/generated/app_generator_test
         run: |
-          bash scripts/start_app.sh blog
+          bash scripts/start_app.sh blog 'Blog "Management"'
           if bash scripts/start_app.sh InvalidName; then
             echo "Invalid app name was unexpectedly accepted" >&2
             exit 1
           fi
           test ! -e apps/InvalidName
+          if bash scripts/start_app.sh conflict; then
+            echo "Conflicting API route was unexpectedly accepted" >&2
+            exit 1
+          fi
+          test ! -e apps/conflict
           python manage.py check
           python - <<'PY'
           import django
           django.setup()
           from django.conf import settings
           from django.urls import get_resolver
+          from apps.blog.apps import BlogConfig
 
+          assert BlogConfig.verbose_name == 'Blog "Management"'
           assert "apps.blog" in settings.INSTALLED_APPS
           patterns = get_resolver().url_patterns
           assert any(str(pattern.pattern) == "api/blog/" for pattern in patterns)
