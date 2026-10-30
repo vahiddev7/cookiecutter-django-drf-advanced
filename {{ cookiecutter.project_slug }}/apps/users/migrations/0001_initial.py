@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
                     help_text="Specific permissions granted to each user.",
                     related_name="user_set",
                     related_query_name="user",
-                    to="auth.group",
+                    to="auth.permission",
                     verbose_name="user permissions",
                 )),
             ],
