@@ -97,6 +97,26 @@ jobs:
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python manage.py check
 
+      - name: Verify generated app and test layout
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: |
+          bash scripts/start_app.sh blog
+          python - <<'PY'
+          from pathlib import Path
+
+          app_dir = Path("apps/blog")
+          expected = {"unit", "integration", "e2e"}
+          actual = {path.name for path in (app_dir / "tests").iterdir() if path.is_dir()}
+          assert actual == expected, f"Unexpected test layout: {actual}"
+          assert (app_dir / "tests" / "__init__.py").is_file()
+          assert all((app_dir / "tests" / name / "__init__.py").is_file() for name in expected)
+          settings = Path("config/settings/base.py").read_text()
+          urls = Path("config/urls.py").read_text()
+          assert '"apps.blog"' in settings
+          assert 'include("apps.blog.urls")' in urls
+          PY
+          python manage.py check
+
       - name: Validate Docker Compose configuration
         if: matrix.use_docker == 'y'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
