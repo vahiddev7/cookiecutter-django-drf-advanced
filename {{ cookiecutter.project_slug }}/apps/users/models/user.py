@@ -7,6 +7,8 @@ class User(AbstractUser):
     email = models.EmailField(unique=True, verbose_name="email address")
 
     class Meta:
+        verbose_name = "user"
+        verbose_name_plural = "users"
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(email=Lower(Trim("email"))),
