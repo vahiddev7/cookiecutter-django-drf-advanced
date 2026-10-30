@@ -102,8 +102,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
-LANGUAGE_CODE = "fa"
-TIME_ZONE = "UTC"
+LANGUAGE_CODE = env("LANGUAGE_CODE", default="fa")
+TIME_ZONE = env("TIME_ZONE", default="UTC")
 USE_I18N = True
 USE_TZ = True
 
