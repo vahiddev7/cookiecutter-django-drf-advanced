@@ -1,0 +1,60 @@
+name: Production Docker image smoke test
+
+on:
+  pull_request:
+    paths:
+      - "{{ cookiecutter.project_slug }}/docker/production/**"
+      - "{{ cookiecutter.project_slug }}/docker/nginx/**"
+      - "{{ cookiecutter.project_slug }}/docker-compose.yml"
+      - ".github/workflows/production-docker-smoke.yml"
+  workflow_dispatch:
+
+jobs:
+  production-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Cookiecutter
+        run: python -m pip install --upgrade pip cookiecutter
+
+      - name: Generate a minimal SQLite project
+        run: >-
+          cookiecutter --no-input . --output-dir "$RUNNER_TEMP/generated"
+          project_name="Docker Smoke Test"
+          project_slug=docker_smoke_test
+          author_name=CI
+          use_drf=n
+          use_swagger=n
+          use_docker=y
+          database_engine=sqlite
+          use_celery=n
+          celery_broker=redis
+
+      - name: Validate Compose configuration
+        working-directory: ${{ runner.temp }}/generated/docker_smoke_test
+        run: docker compose config --quiet
+
+      - name: Build production image
+        working-directory: ${{ runner.temp }}/generated/docker_smoke_test
+        run: docker compose build app
+
+      - name: Verify production container is non-root
+        working-directory: ${{ runner.temp }}/generated/docker_smoke_test
+        run: |
+          uid="$(docker compose run --rm --no-deps app id -u)"
+          test "$uid" != "0"
+
+      - name: Run production migrations and collectstatic
+        working-directory: ${{ runner.temp }}/generated/docker_smoke_test
+        run: docker compose run --rm migrate
+
+      - name: Clean up
+        if: always()
+        working-directory: ${{ runner.temp }}/generated/docker_smoke_test
+        run: docker compose down --volumes --remove-orphans
