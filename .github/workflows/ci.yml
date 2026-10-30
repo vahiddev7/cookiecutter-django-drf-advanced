@@ -114,7 +114,7 @@ jobs:
           assert actual_app_dirs == expected_app_dirs, f"Unexpected app scaffold: {actual_app_dirs}"
           assert all((app_dir / name).is_file() for name in ("apps.py", "admin.py", "urls.py"))
           assert (app_dir / "tests" / "__init__.py").is_file()
-          assert all((app_dir / "tests" / name / "__init__.py").is_file() for name in expected)
+          assert all((app_dir / "tests" / name / "__init__.py").is_file() for name in expected_tests)
           settings = Path("config/settings/base.py").read_text()
           urls = Path("config/urls.py").read_text()
           assert '"apps.blog"' in settings
