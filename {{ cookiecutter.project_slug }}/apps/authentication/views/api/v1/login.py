@@ -5,3 +5,4 @@ from apps.authentication.serializers.login import LoginSerializer
 
 class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
+    throttle_scope = "login"

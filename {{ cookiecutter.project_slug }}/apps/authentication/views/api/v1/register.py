@@ -8,3 +8,4 @@ class RegisterView(CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = (AllowAny,)
     authentication_classes = ()
+    throttle_scope = "register"
