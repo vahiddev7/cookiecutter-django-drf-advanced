@@ -66,6 +66,12 @@ def ensure_url_import(source):
     if imports:
         node = imports[0]
         names = {item.name for item in node.names}
+        if any(
+            item.name in {"include", "path"}
+            and item.asname is not None
+            for item in node.names
+        ):
+            fail("The django.urls include/path imports must not be aliased.")
         missing = [name for name in ("include", "path") if name not in names]
         if not missing:
             return source
