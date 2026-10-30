@@ -308,3 +308,16 @@ Keep tests close to the app they cover. Create test files and subpackages only w
 The production Compose template publishes only Nginx on host port `80`. The application, database, and Celery broker services communicate over the private Compose network; their ports are not published directly to the host. This avoids exposing database listeners, Gunicorn, or the RabbitMQ management UI on every host interface by default.
 
 For production deployments, terminate HTTPS at a trusted reverse proxy or load balancer and forward traffic to Nginx. Do not expose the HTTP endpoint publicly without an appropriate TLS-terminating layer. If you need to access a database or the RabbitMQ management UI from your own machine for development, use a separate local-only Compose override that binds the required port to `127.0.0.1`, and do not use that override in production.
+
+
+### Production HTTPS and browser security
+
+The production settings enable secure session and CSRF cookies, MIME-sniffing protection, clickjacking protection, and a restrictive referrer policy. Serve the application exclusively over HTTPS in production.
+
+HTTPS redirect and HSTS are explicit deployment choices:
+
+- Set `SECURE_SSL_REDIRECT=True` only after HTTPS is configured and every request reaching Django is correctly recognized as HTTPS.
+- If TLS terminates at a trusted reverse proxy or load balancer, set `TRUST_PROXY_SSL_HEADER=True` only when that proxy **overwrites** the `X-Forwarded-Proto` header before forwarding requests. Never trust this header from arbitrary clients.
+- Set `SECURE_HSTS_SECONDS` to a positive value only after HTTPS works reliably. Increase it gradually; enable subdomains or preload only when every affected hostname supports HTTPS.
+
+The defaults keep redirect and HSTS disabled to avoid redirect loops or accidentally locking a domain into HTTPS before its infrastructure is ready. The secure-cookie defaults still require HTTPS for normal production browser sessions.
