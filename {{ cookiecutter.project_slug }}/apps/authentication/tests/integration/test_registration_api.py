@@ -9,7 +9,7 @@ def test_registration_creates_user_without_returning_password():
         "/api/auth/register/",
         {
             "username": "registered-user",
-            "email": "registered@example.com",
+            "email": "Registered@Example.com",
             "password": "Unique-Strong-Password-927!",
         },
         format="json",
@@ -20,6 +20,7 @@ def test_registration_creates_user_without_returning_password():
     assert response.data["email"] == "registered@example.com"
     assert "password" not in response.data
     user = get_user_model().objects.get(username="registered-user")
+    assert user.email == "registered@example.com"
     assert user.check_password("Unique-Strong-Password-927!")
 
 
@@ -44,6 +45,30 @@ def test_registration_rejects_duplicate_username():
 
     assert response.status_code == 400
     assert "username" in response.data
+
+
+@pytest.mark.django_db
+def test_registration_rejects_duplicate_email_case_insensitively():
+    user_model = get_user_model()
+    user_model.objects.create_user(
+        username="existing-user",
+        email="existing@example.com",
+        password="Unique-Strong-Password-927!",
+    )
+
+    response = APIClient().post(
+        "/api/auth/register/",
+        {
+            "username": "another-user",
+            "email": "Existing@Example.COM",
+            "password": "Another-Strong-Password-927!",
+        },
+        format="json",
+    )
+
+    assert response.status_code == 400
+    assert "email" in response.data
+
 
 @pytest.mark.django_db
 def test_login_returns_jwt_pair_for_valid_credentials():
