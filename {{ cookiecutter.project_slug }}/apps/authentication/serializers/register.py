@@ -14,6 +14,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ("id", "username", "email", "password")
         read_only_fields = ("id",)
 
+    def validate_email(self, value):
+        normalized_email = value.strip().lower()
+        if get_user_model().objects.filter(email__iexact=normalized_email).exists():
+            raise serializers.ValidationError("A user with this email already exists.")
+        return normalized_email
+
     def validate(self, attrs):
         user = get_user_model()(
             username=attrs.get("username", ""),
