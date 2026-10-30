@@ -181,6 +181,13 @@ jobs:
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: docker compose run --rm migrate
 
+      - name: Run integration tests on PostgreSQL and SQL Server
+        if: matrix.database_engine == 'postgresql' || matrix.database_engine == 'sqlserver'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: >-
+          docker compose run --rm --no-deps app
+          sh -c "pip install pytest pytest-django && pytest -q"
+
       - name: Stop Docker services
         if: always() && matrix.use_docker == 'y'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
