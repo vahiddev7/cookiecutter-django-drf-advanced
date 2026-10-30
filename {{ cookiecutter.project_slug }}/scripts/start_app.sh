@@ -94,16 +94,13 @@ if route not in urls_text:
     urls_path.write_text(urls_text, encoding="utf-8")
 PY
 
+# Keep tests grouped by test scope. Add files only when a test is needed.
 TEST_ROOT="${APP_FULL_PATH}/tests"
 mkdir -p "${TEST_ROOT}"
-touch "${APP_FULL_PATH}/tests/__init__.py"
-for category in apis models permissions selectors serializers services; do
-  mkdir -p "${TEST_ROOT}/${category}"
-  touch "${TEST_ROOT}/${category}/__init__.py"
-  for test_type in unit_test integration_test e2e_test; do
-    mkdir -p "${TEST_ROOT}/${category}/${test_type}"
-    touch "${TEST_ROOT}/${category}/${test_type}/__init__.py"
-  done
+touch "${TEST_ROOT}/__init__.py"
+for test_type in unit integration e2e; do
+  mkdir -p "${TEST_ROOT}/${test_type}"
+  touch "${TEST_ROOT}/${test_type}/__init__.py"
 done
 
 echo "Created app '${APP_NAME}' at ${APP_FULL_PATH}"
