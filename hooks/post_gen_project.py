@@ -55,6 +55,7 @@ if not env_file.exists() and env_example.exists():
             "DB_PASSWORD": database_password,
             "DB_HOST": "localhost",
             "DB_PORT": "1433",
+            "DB_TRUST_SERVER_CERTIFICATE": "True",
         },
     }.get(database_engine)
 
