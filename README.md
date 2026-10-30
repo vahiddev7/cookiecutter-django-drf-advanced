@@ -56,7 +56,14 @@ Optional reusable read queries; use them when query logic deserves a name or reu
 
 ### 🔹 Models
 
-Django models define persisted data, relationships, and model-level behavior
+Django models define persisted data, relationships, and model-level behavior.
+
+### 🔹 App boundaries
+
+- `users` owns the user model and user-related data.
+- `authentication` owns login, registration, and token flows; it is generated only when `use_drf=y`.
+- `config` wires apps together and owns project-wide settings.
+- Add services, selectors, serializers, and other modules only when they represent real behavior. Empty placeholder layers are intentionally not generated.
 
 ---
 
@@ -265,7 +272,7 @@ over quick-and-dirty setups.
 
 ## 🗺 Roadmap
 
-* [ ] Add CI/CD pipeline
+* [x] Add CI/CD pipeline
 * [ ] Add GraphQL option
 * [ ] Add lightweight mode
 * [ ] Add project CLI
