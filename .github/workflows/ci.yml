@@ -9,9 +9,6 @@ on:
 jobs:
   generated-project:
     runs-on: ubuntu-latest
-    env:
-      RABBITMQ_DEFAULT_USER: ci_rabbitmq_user
-      RABBITMQ_DEFAULT_PASS: ci-only-long-random-looking-password
     strategy:
       fail-fast: false
       matrix:
@@ -126,6 +123,52 @@ jobs:
         if: matrix.use_docker == 'y'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: docker compose config --quiet
+
+      - name: Verify generated RabbitMQ credentials
+        if: matrix.use_celery == 'y' && matrix.celery_broker == 'rabbitmq'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: |
+          grep -Eq '^RABBITMQ_DEFAULT_USER=app_[a-f0-9]{16}        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Apply migrations
+        if: matrix.database_engine == 'sqlite'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: python manage.py migrate --noinput
+
+      - name: Run project tests
+        if: matrix.database_engine == 'sqlite' && matrix.use_drf == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: pytest -q
+ .env
+          grep -Eq '^RABBITMQ_DEFAULT_PASS=.{32,}        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Apply migrations
+        if: matrix.database_engine == 'sqlite'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: python manage.py migrate --noinput
+
+      - name: Run project tests
+        if: matrix.database_engine == 'sqlite' && matrix.use_drf == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: pytest -q
+ .env
+
+      - name: Start selected Celery broker
+        if: matrix.use_docker == 'y' && matrix.use_celery == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: docker compose up -d broker
+
+      - name: Run migrations against the selected database
+        if: matrix.use_docker == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: docker compose run --rm migrate
+
+      - name: Stop Docker services
+        if: always() && matrix.use_docker == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: docker compose down --volumes --remove-orphans
 
       - name: Check migrations
         if: matrix.database_engine == 'sqlite'
