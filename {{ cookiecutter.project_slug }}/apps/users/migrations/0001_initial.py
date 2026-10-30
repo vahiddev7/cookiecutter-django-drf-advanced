@@ -47,7 +47,7 @@ class Migration(migrations.Migration):
                 )),
                 ("user_permissions", models.ManyToManyField(
                     blank=True,
-                    help_text="Specific permissions granted to each user.",
+                    help_text="Specific permissions for this user.",
                     related_name="user_set",
                     related_query_name="user",
                     to="auth.permission",
