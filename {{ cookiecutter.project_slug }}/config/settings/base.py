@@ -93,8 +93,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
-LANGUAGE_CODE = "fa"
-TIME_ZONE = "UTC"
+LANGUAGE_CODE = env("LANGUAGE_CODE", default="fa")
+TIME_ZONE = env("TIME_ZONE", default="UTC")
 USE_I18N = True
 USE_TZ = True
 
@@ -124,10 +124,15 @@ WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 ROOT_URLCONF = "config.urls"
 
-STATIC_URL = "/static/"
-MEDIA_URL = "/media/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_ROOT = BASE_DIR / "media"
+def _path_setting(name, default):
+    value = Path(env(name, default=str(default)))
+    return value if value.is_absolute() else BASE_DIR / value
+
+
+STATIC_URL = env("STATIC_URL", default="/static/")
+MEDIA_URL = env("MEDIA_URL", default="/media/")
+STATIC_ROOT = _path_setting("STATIC_ROOT", BASE_DIR / "staticfiles")
+MEDIA_ROOT = _path_setting("MEDIA_ROOT", BASE_DIR / "media")
 AUTH_USER_MODEL = "users.User"
 
 {% if cookiecutter.use_drf == "y" %}
