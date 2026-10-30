@@ -310,6 +310,12 @@ The production Compose template publishes only Nginx on host port `80`. The appl
 For production deployments, terminate HTTPS at a trusted reverse proxy or load balancer and forward traffic to Nginx. Do not expose the HTTP endpoint publicly without an appropriate TLS-terminating layer. If you need to access a database or the RabbitMQ management UI from your own machine for development, use a separate local-only Compose override that binds the required port to `127.0.0.1`, and do not use that override in production.
 
 
+### SQL Server and refresh-token rotation
+
+The SQL Server option uses a different SimpleJWT refresh-token policy. The SQL Server Django backend does not support altering an existing `AutoField` to `BigAutoField`, while SimpleJWT's token-blacklist migration performs that change. To keep SQL Server migrations executable, generated SQL Server projects omit the blacklist app and disable refresh-token rotation. Refresh tokens therefore remain valid until their configured expiry and cannot be revoked through SimpleJWT's blacklist. Other supported database engines keep refresh-token rotation and blacklisting enabled.
+
+If refresh-token revocation is a requirement, use PostgreSQL or MySQL with the default configuration, or implement and test a SQL Server-specific token-blacklist migration before enabling it. See the [Microsoft SQL Server Django migration limitations](https://learn.microsoft.com/en-us/sql/connect/python/mssql-django/migrations?view=sql-server-ver17).
+
 ### Production HTTPS and browser security
 
 The production settings enable secure session and CSRF cookies, MIME-sniffing protection, clickjacking protection, and a restrictive referrer policy. Serve the application exclusively over HTTPS in production.
