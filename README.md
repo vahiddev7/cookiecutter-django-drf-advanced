@@ -153,6 +153,9 @@ apps/blog/
   serializers/
   views/api/v1/
   tests/
+    unit/
+    integration/
+    e2e/
 ```
 
 The script also adds `apps.<app_name>` to `INSTALLED_APPS` and includes the app's URL module under `/api/<app_name>/`. Add endpoint patterns to `apps/<app_name>/urls.py`, then define models and run migrations as needed.
@@ -199,11 +202,11 @@ During setup:
 pytest
 ```
 
-Structure:
+Each app keeps its own tests in `apps/<app_name>/tests/`, organized by test scope:
 
-* API tests
-* Service tests
-* Selector tests
+* `unit/`
+* `integration/`
+* `e2e/`
 
 ---
 
