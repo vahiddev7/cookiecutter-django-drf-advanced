@@ -321,3 +321,12 @@ HTTPS redirect and HSTS are explicit deployment choices:
 - Set `SECURE_HSTS_SECONDS` to a positive value only after HTTPS works reliably. Increase it gradually; enable subdomains or preload only when every affected hostname supports HTTPS.
 
 The defaults keep redirect and HSTS disabled to avoid redirect loops or accidentally locking a domain into HTTPS before its infrastructure is ready. The secure-cookie defaults still require HTTPS for normal production browser sessions.
+
+
+### CORS and CSRF trusted origins
+
+Cross-origin browser access is disabled by default. If a separate frontend needs browser access to the API, set `CORS_ALLOWED_ORIGINS` to an explicit comma-separated list of full origins, including the scheme and port where applicable (for example, `https://frontend.example.com`). Do not use `*` as a production shortcut.
+
+`CSRF_TRUSTED_ORIGINS` is a separate Django setting. Configure it only when a trusted frontend needs to submit cookie/session-authenticated unsafe requests across origins; list full origins including `https://`. CORS permission does not grant CSRF trust, and CSRF trust does not grant CORS access.
+
+Keep `CORS_ALLOW_CREDENTIALS=False` unless the browser must send cookies or other credentials cross-origin. When credentials are enabled, continue using explicit origins and normal CSRF protections.
