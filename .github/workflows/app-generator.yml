@@ -49,6 +49,18 @@ jobs:
             exit 1
           fi
           test ! -e apps/InvalidName
+          python - <<'PY'
+          from pathlib import Path
+
+          urls_path = Path("config/urls.py")
+          urls = urls_path.read_text()
+          urls = urls.replace(
+              "urlpatterns = [",
+              'urlpatterns = [\\n    path("api/conflict/", include("apps.blog.urls")),',
+              1,
+          )
+          urls_path.write_text(urls)
+          PY
           if bash scripts/start_app.sh conflict; then
             echo "Conflicting API route was unexpectedly accepted" >&2
             exit 1
