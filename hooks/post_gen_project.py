@@ -55,6 +55,7 @@ if not env_file.exists() and env_example.exists():
             "DB_PASSWORD": database_password,
             "DB_HOST": "localhost",
             "DB_PORT": "1433",
+            "DB_TRUST_SERVER_CERTIFICATE": "True",
         },
     }.get(database_engine)
 
@@ -64,7 +65,29 @@ if not env_file.exists() and env_example.exists():
             f"{key}={value}\n" for key, value in database_settings.items()
         )
 
+    if "{{ cookiecutter.use_celery }}" == "y" and "{{ cookiecutter.celery_broker }}" == "rabbitmq":
+        rabbitmq_user = "app_" + secrets.token_hex(8)
+        rabbitmq_password = secrets.token_urlsafe(32)
+        content += "\n# Active RabbitMQ credentials for this generated project\n"
+        content += f"RABBITMQ_DEFAULT_USER={rabbitmq_user}\n"
+        content += f"RABBITMQ_DEFAULT_PASS={rabbitmq_password}\n"
+
     env_file.write_text(content, encoding="utf-8")
+
+if "{{ cookiecutter.use_drf }}" != "y":
+    authentication_app = project_dir / "apps" / "authentication"
+    if authentication_app.exists():
+        shutil.rmtree(authentication_app)
+
+if "{{ cookiecutter.use_celery }}" != "y":
+    celery_config = project_dir / "config" / "celery.py"
+    if celery_config.exists():
+        celery_config.unlink()
+
+if "{{ cookiecutter.use_drf }}" != "y" or "{{ cookiecutter.use_swagger }}" != "y":
+    swagger_assets = project_dir / "static" / "swagger"
+    if swagger_assets.exists():
+        shutil.rmtree(swagger_assets)
 
 if "{{ cookiecutter.use_docker }}" != "y":
     docker_compose = project_dir / "docker-compose.yml"

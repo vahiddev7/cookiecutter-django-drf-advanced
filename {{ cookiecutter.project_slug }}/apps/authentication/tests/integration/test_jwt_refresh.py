@@ -1,10 +1,11 @@
 import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.test import APIClient
+from rest_framework_simplejwt.settings import api_settings
 
 
 @pytest.mark.django_db
-def test_refresh_rotates_token_and_blacklists_previous_token():
+def test_refresh_follows_configured_rotation_policy():
     get_user_model().objects.create_user(
         username="refresh-user",
         email="refresh@example.com",
@@ -30,17 +31,27 @@ def test_refresh_rotates_token_and_blacklists_previous_token():
     )
 
     assert refresh_response.status_code == 200
-    rotated_refresh = refresh_response.data["refresh"]
-    assert rotated_refresh != original_refresh
     assert "access" in refresh_response.data
 
-    reuse_response = client.post(
-        "/api/auth/token/refresh/",
-        {"refresh": original_refresh},
-        format="json",
-    )
+    if api_settings.ROTATE_REFRESH_TOKENS:
+        rotated_refresh = refresh_response.data["refresh"]
+        assert rotated_refresh != original_refresh
 
-    assert reuse_response.status_code == 401
+        reuse_response = client.post(
+            "/api/auth/token/refresh/",
+            {"refresh": original_refresh},
+            format="json",
+        )
+        assert reuse_response.status_code == 401
+    else:
+        assert "refresh" not in refresh_response.data
+
+        reuse_response = client.post(
+            "/api/auth/token/refresh/",
+            {"refresh": original_refresh},
+            format="json",
+        )
+        assert reuse_response.status_code == 200
 
 
 @pytest.mark.django_db

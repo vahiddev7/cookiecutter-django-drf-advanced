@@ -9,9 +9,6 @@ on:
 jobs:
   generated-project:
     runs-on: ubuntu-latest
-    env:
-      RABBITMQ_DEFAULT_USER: ci_rabbitmq_user
-      RABBITMQ_DEFAULT_PASS: ci-only-long-random-looking-password
     strategy:
       fail-fast: false
       matrix:
@@ -93,6 +90,46 @@ jobs:
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python -m pip install -r requirements/base.txt pytest pytest-django
 
+      - name: Verify optional feature output
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        env:
+          USE_DRF: ${{ matrix.use_drf }}
+          USE_SWAGGER: ${{ matrix.use_swagger }}
+          USE_CELERY: ${{ matrix.use_celery }}
+          DATABASE_ENGINE: ${{ matrix.database_engine }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os
+
+          if os.environ["USE_DRF"] == "n":
+              assert not Path("apps/authentication").exists()
+          else:
+              assert Path("apps/authentication").is_dir()
+
+          if os.environ["USE_CELERY"] == "n":
+              assert not Path("config/celery.py").exists()
+          else:
+              assert Path("config/celery.py").is_file()
+
+          if os.environ["USE_DRF"] == "y":
+              from config.settings.base import INSTALLED_APPS, SIMPLE_JWT
+              blacklist_app = "rest_framework_simplejwt.token_blacklist"
+              if os.environ["DATABASE_ENGINE"] == "sqlserver":
+                  assert blacklist_app not in INSTALLED_APPS
+                  assert SIMPLE_JWT["ROTATE_REFRESH_TOKENS"] is False
+                  assert SIMPLE_JWT["BLACKLIST_AFTER_ROTATION"] is False
+              else:
+                  assert blacklist_app in INSTALLED_APPS
+                  assert SIMPLE_JWT["ROTATE_REFRESH_TOKENS"] is True
+                  assert SIMPLE_JWT["BLACKLIST_AFTER_ROTATION"] is True
+
+          if os.environ["USE_DRF"] == "n" or os.environ["USE_SWAGGER"] == "n":
+              assert not Path("static/swagger").exists()
+          else:
+              assert Path("static/swagger").is_dir()
+          PY
+
       - name: Django system checks
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python manage.py check
@@ -127,6 +164,35 @@ jobs:
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: docker compose config --quiet
 
+      - name: Verify generated RabbitMQ credentials
+        if: matrix.use_celery == 'y' && matrix.celery_broker == 'rabbitmq'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: |
+          grep -Eq '^RABBITMQ_DEFAULT_USER=app_[a-f0-9]{16}$' .env
+          grep -Eq '^RABBITMQ_DEFAULT_PASS=.{32,}$' .env
+
+      - name: Start selected Celery broker
+        if: matrix.use_docker == 'y' && matrix.use_celery == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: docker compose up -d broker
+
+      - name: Run migrations against the selected database
+        if: matrix.use_docker == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: docker compose run --rm migrate
+
+      - name: Run integration tests on PostgreSQL and SQL Server
+        if: matrix.database_engine == 'postgresql' || matrix.database_engine == 'sqlserver'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: >-
+          docker compose run --rm --no-deps app
+          sh -c "pip install pytest pytest-django && pytest -q"
+
+      - name: Stop Docker services
+        if: always() && matrix.use_docker == 'y'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: docker compose down --volumes --remove-orphans
+
       - name: Check migrations
         if: matrix.database_engine == 'sqlite'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
@@ -138,6 +204,6 @@ jobs:
         run: python manage.py migrate --noinput
 
       - name: Run project tests
-        if: matrix.database_engine == 'sqlite' && matrix.use_drf == 'y'
+        if: matrix.database_engine == 'sqlite'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: pytest -q
