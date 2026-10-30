@@ -104,6 +104,7 @@ for test_type in unit integration e2e; do
 done
 
 echo "Created app '${APP_NAME}' at ${APP_FULL_PATH}"
-echo "Test layout created under ${TEST_ROOT}"\necho "Add service, selector, serializer, permission, and view modules only when needed."
+echo "Test layout created under ${TEST_ROOT}"
+echo "Add service, selector, serializer, permission, and view modules only when needed."
 echo "Registered apps.${APP_NAME} and /api/${APP_NAME}/ in project settings."
 echo "Define models and run migrations before using database-backed features."
