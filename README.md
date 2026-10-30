@@ -176,7 +176,7 @@ When `use_drf=y`, the generated project exposes these endpoints:
 | `POST` | `/api/auth/token/` | Backwards-compatible alias for JWT token obtain |
 | `POST` | `/api/auth/token/refresh/` | Refresh an access token |
 
-Registration validates passwords with Django's configured password validators. The password is write-only and is never included in the response. Login accepts the username/password fields expected by SimpleJWT.
+Registration requires a unique email address (case-insensitive) and a username. Email addresses are trimmed and stored in lowercase. Passwords are validated with Django's configured password validators; the password is write-only and is never included in the response. Login accepts the username/password fields expected by SimpleJWT.
 
 ---
 
