@@ -58,6 +58,12 @@ djangorestframework-stubs = "3.16.9"
 {% endif %}
 boto3-stubs = "1.42.93"
 
+[tool.poetry.group.production]
+optional = true
+
+[tool.poetry.group.production.dependencies]
+gunicorn = "25.3.0"
+
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
