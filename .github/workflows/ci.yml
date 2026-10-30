@@ -105,9 +105,14 @@ jobs:
           from pathlib import Path
 
           app_dir = Path("apps/blog")
-          expected = {"unit", "integration", "e2e"}
-          actual = {path.name for path in (app_dir / "tests").iterdir() if path.is_dir()}
-          assert actual == expected, f"Unexpected test layout: {actual}"
+          expected_tests = {"unit", "integration", "e2e"}
+          actual_tests = {path.name for path in (app_dir / "tests").iterdir() if path.is_dir()}
+          assert actual_tests == expected_tests, f"Unexpected test layout: {actual_tests}"
+
+          expected_app_dirs = {"models", "migrations", "tests"}
+          actual_app_dirs = {path.name for path in app_dir.iterdir() if path.is_dir()}
+          assert actual_app_dirs == expected_app_dirs, f"Unexpected app scaffold: {actual_app_dirs}"
+          assert all((app_dir / name).is_file() for name in ("apps.py", "admin.py", "urls.py"))
           assert (app_dir / "tests" / "__init__.py").is_file()
           assert all((app_dir / "tests" / name / "__init__.py").is_file() for name in expected)
           settings = Path("config/settings/base.py").read_text()

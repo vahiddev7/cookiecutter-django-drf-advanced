@@ -27,7 +27,7 @@ if [[ -z "${APP_VERBOSE_NAME}" ]]; then
 fi
 APP_CLASS_NAME="$(printf '%s' "${APP_NAME}" | awk -F_ '{for(i=1;i<=NF;i++) $i=toupper(substr($i,1,1)) substr($i,2); printf "%s",$0}' | tr -d ' ')"
 
-mkdir -p "${APP_FULL_PATH}"/{models,services,selectors,serializers,permissions,migrations,views/api/v1}
+mkdir -p "${APP_FULL_PATH}"/{models,migrations}
 touch "${APP_FULL_PATH}/__init__.py"
 cat > "${APP_FULL_PATH}/apps.py" <<EOF
 from django.apps import AppConfig
@@ -38,7 +38,7 @@ class ${APP_CLASS_NAME}Config(AppConfig):
     name = "apps.${APP_NAME}"
     verbose_name = "${APP_VERBOSE_NAME}"
 EOF
-for package in models services selectors serializers permissions migrations views views/api views/api/v1; do
+for package in models migrations; do
   touch "${APP_FULL_PATH}/${package}/__init__.py"
 done
 touch "${APP_FULL_PATH}/admin.py"
@@ -104,6 +104,6 @@ for test_type in unit integration e2e; do
 done
 
 echo "Created app '${APP_NAME}' at ${APP_FULL_PATH}"
-echo "Test layout created under ${TEST_ROOT}"
+echo "Test layout created under ${TEST_ROOT}"\necho "Add service, selector, serializer, permission, and view modules only when needed."
 echo "Registered apps.${APP_NAME} and /api/${APP_NAME}/ in project settings."
 echo "Define models and run migrations before using database-backed features."
