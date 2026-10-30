@@ -38,17 +38,17 @@ jobs:
 
       - name: Install runtime dependencies
         working-directory: ${{ runner.temp }}/generated/app_generator_test
-        run: >-
-          python -m pip install
-          Django==5.2.13
-          django-environ==0.13.0
-          djangorestframework==3.17.1
-          djangorestframework-simplejwt==5.5.1
+        run: python -m pip install -r requirements/base.txt
 
       - name: Generate and validate an app
         working-directory: ${{ runner.temp }}/generated/app_generator_test
         run: |
           bash scripts/start_app.sh blog
+          if bash scripts/start_app.sh InvalidName; then
+            echo "Invalid app name was unexpectedly accepted" >&2
+            exit 1
+          fi
+          test ! -e apps/InvalidName
           python manage.py check
           python - <<'PY'
           import django
