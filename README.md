@@ -332,6 +332,12 @@ Cross-origin browser access is disabled by default. If a separate frontend needs
 Keep `CORS_ALLOW_CREDENTIALS=False` unless the browser must send cookies or other credentials cross-origin. When credentials are enabled, continue using explicit origins and normal CSRF protections.
 
 
+### Shared cache and API throttling
+
+The default Django cache uses the database-backed cache table `django_cache`, created by the core app's initial migration. This gives all Gunicorn workers a shared cache and keeps DRF's built-in login and registration throttling counters consistent across processes without requiring Redis.
+
+Database-backed caching is a practical default for a starter project and low-to-moderate traffic. For higher-throughput deployments, replace the cache backend with a shared Redis service and install the Redis Python client; do not switch to per-process `LocMemCache` when relying on throttling across multiple workers.
+
 ### Default API permissions
 
 When Django REST Framework is enabled, API views require an authenticated user by default through `IsAuthenticated`. This is a secure baseline for new endpoints: explicitly use `AllowAny` only for intentionally public views.
