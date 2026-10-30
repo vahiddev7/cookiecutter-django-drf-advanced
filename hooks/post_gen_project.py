@@ -73,6 +73,21 @@ if not env_file.exists() and env_example.exists():
 
     env_file.write_text(content, encoding="utf-8")
 
+if "{{ cookiecutter.use_drf }}" != "y":
+    authentication_app = project_dir / "apps" / "authentication"
+    if authentication_app.exists():
+        shutil.rmtree(authentication_app)
+
+if "{{ cookiecutter.use_celery }}" != "y":
+    celery_config = project_dir / "config" / "celery.py"
+    if celery_config.exists():
+        celery_config.unlink()
+
+if "{{ cookiecutter.use_drf }}" != "y" or "{{ cookiecutter.use_swagger }}" != "y":
+    swagger_assets = project_dir / "static" / "swagger"
+    if swagger_assets.exists():
+        shutil.rmtree(swagger_assets)
+
 if "{{ cookiecutter.use_docker }}" != "y":
     docker_compose = project_dir / "docker-compose.yml"
     docker_dir = project_dir / "docker"
