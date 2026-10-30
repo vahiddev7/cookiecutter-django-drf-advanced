@@ -199,6 +199,15 @@ During setup:
 
 ---
 
+## 📦 Dependency installation
+
+The generated project supports two installation workflows:
+
+- **pip:** use `requirements/develop.txt` for local development and `requirements/production.txt` for a production image.
+- **Poetry:** use `poetry install --with test,dev` for development, or `poetry install --only main,production` for a production environment.
+
+The Poetry production group includes Gunicorn, matching `requirements/production.txt`. When changing a dependency version or an optional feature, keep the corresponding pip and Poetry declarations aligned.
+
 ## 🧪 Testing
 
 ```bash
