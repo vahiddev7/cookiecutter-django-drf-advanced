@@ -138,6 +138,6 @@ jobs:
         run: python manage.py migrate --noinput
 
       - name: Run project tests
-        if: matrix.database_engine == 'sqlite' && matrix.use_drf == 'y'
+        if: matrix.database_engine == 'sqlite'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: pytest -q
