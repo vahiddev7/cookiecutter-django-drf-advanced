@@ -196,7 +196,7 @@ jobs:
       - name: Check migrations
         if: matrix.database_engine == 'sqlite'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
-        run: python manage.py makemigrations --check --dry-run
+        run: python manage.py makemigrations --check --dry-run --verbosity 3
 
       - name: Apply migrations
         if: matrix.database_engine == 'sqlite'

@@ -4,6 +4,7 @@ import django.contrib.auth.models
 import django.contrib.auth.validators
 import django.utils.timezone
 from django.db import migrations, models
+from django.db.models.functions import Lower, Trim
 
 
 class Migration(migrations.Migration):
@@ -61,5 +62,12 @@ class Migration(migrations.Migration):
             managers=[
                 ("objects", django.contrib.auth.models.UserManager()),
             ],
+        ),
+        migrations.AddConstraint(
+            model_name="user",
+            constraint=models.CheckConstraint(
+                condition=models.Q(email=Lower(Trim("email"))),
+                name="users_email_normalized",
+            ),
         ),
     ]
