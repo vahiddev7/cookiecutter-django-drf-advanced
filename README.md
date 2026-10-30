@@ -280,39 +280,21 @@ It helps others discover it.
 
 ### Per-app test layout
 
-Every app owns its tests under `apps/<app_name>/tests/`. The app generator creates:
+Each app owns its tests under `apps/<app_name>/tests/`, grouped by test scope:
 
 ```text
 tests/
-  apis/
-    unit_test/
-    integration_test/
-    e2e_test/
-  models/
-    unit_test/
-    integration_test/
-    e2e_test/
-  permissions/
-    unit_test/
-    integration_test/
-    e2e_test/
-  selectors/
-    unit_test/
-    integration_test/
-    e2e_test/
-  serializers/
-    unit_test/
-    integration_test/
-    e2e_test/
-  services/
-    unit_test/
-    integration_test/
-    e2e_test/
+  unit/
+  integration/
+  e2e/
 ```
 
-Use unit tests for isolated behavior, integration tests for interactions with the database or
-other components, and end-to-end tests for complete request flows. Run tests from the
-generated project root with `pytest`.
+- **Unit:** test a small piece of behavior in isolation.
+- **Integration:** test interactions between components, such as database queries and services.
+- **E2E:** test complete user-facing flows through the application.
+
+Keep tests close to the app they cover. Create test files and subpackages only when they are needed; the app generator creates the three scope directories without pre-populating empty categories. Run the suite from the generated project root with `pytest`.
+
 
 
 ### Docker Compose network exposure and HTTPS
