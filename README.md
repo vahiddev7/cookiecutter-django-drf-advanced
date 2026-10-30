@@ -26,19 +26,20 @@ Most Django projects start simple… and become messy.
 
 This template gives you a **solid foundation from day one**:
 
-* 🧱 Clean Architecture (Service & Selector pattern)
+* 🧱 Modular architecture with optional service and selector layers
 * 🔄 Scalable modular apps
 * 🧪 Built-in testing structure
 * ⚙️ Environment-based settings
 * 🐳 Docker-ready
-* 🔌 API-first design with versioning
+* 🔌 API-ready Django REST Framework foundation
 
 ---
 
 ## 🧠 Architecture (Opinionated)
 
 ```
-Request → View → Service → Selector → Model → DB
+Command: Request → View → Serializer → Service → Model/ORM → DB
+Query:   Request → View → Selector → ORM → DB
 ```
 
 ### 🔹 Views
@@ -47,15 +48,15 @@ Thin layer (just HTTP handling)
 
 ### 🔹 Services
 
-Business logic & write operations
+Optional application logic for commands and write operations
 
 ### 🔹 Selectors
 
-Read-only queries
+Optional reusable read queries; use them when query logic deserves a name or reuse
 
 ### 🔹 Models
 
-Pure data layer
+Django models define persisted data, relationships, and model-level behavior
 
 ---
 
@@ -120,12 +121,14 @@ Cookiecutter creates a local `.env` from `.env.example` after generation and fil
 
 ```
 apps/
+  authentication/
+    serializers/
+    services/
+    views/
+    tests/
   users/
     models/
-    services/
-    selectors/
-    serializers/
-    views/
+    migrations/
     tests/
 
 config/
@@ -147,18 +150,18 @@ Generates:
 
 ```
 apps/blog/
+  apps.py
+  admin.py
+  urls.py
   models/
-  services/
-  selectors/
-  serializers/
-  views/api/v1/
+  migrations/
   tests/
     unit/
     integration/
     e2e/
 ```
 
-The script also adds `apps.<app_name>` to `INSTALLED_APPS` and includes the app's URL module under `/api/<app_name>/`. Add endpoint patterns to `apps/<app_name>/urls.py`, then define models and run migrations as needed.
+The script creates only the Django app essentials and test-scope folders. Add `services/`, `selectors/`, `serializers/`, `permissions/`, or `views/` when the app actually needs them; they are conventions, not mandatory layers. The script also registers `apps.<app_name>` in `INSTALLED_APPS` and includes its URL module under `/api/<app_name>/`. Add endpoint patterns to `apps/<app_name>/urls.py`, then define models and run migrations as needed.
 
 ---
 
