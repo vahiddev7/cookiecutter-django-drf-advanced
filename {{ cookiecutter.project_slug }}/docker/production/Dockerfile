@@ -20,6 +20,7 @@ COPY . /app/
 
 RUN groupadd --system app \
     && useradd --system --gid app --home-dir /app --shell /usr/sbin/nologin app \
+    && mkdir -p /app/data /app/staticfiles /app/media \
     && chmod +x /app/docker/production/entrypoint.sh \
     && chown -R app:app /app
 
