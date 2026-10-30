@@ -1,4 +1,5 @@
 import pytest
+from django.contrib.auth import get_user_model
 
 from apps.authentication.serializers.register import RegisterSerializer
 
@@ -17,11 +18,11 @@ def test_registration_requires_email():
 
 
 @pytest.mark.django_db
-def test_registration_creates_user_with_email():
+def test_registration_creates_user_with_normalized_email():
     serializer = RegisterSerializer(
         data={
             "username": "registrationtest",
-            "email": "registration@example.com",
+            "email": " Registration@Example.COM ",
             "password": "Violet-Telescope-94!River",
         }
     )
@@ -31,3 +32,22 @@ def test_registration_creates_user_with_email():
 
     assert user.email == "registration@example.com"
     assert user.check_password("Violet-Telescope-94!River")
+
+
+@pytest.mark.django_db
+def test_registration_rejects_email_used_with_different_case():
+    get_user_model().objects.create_user(
+        username="existinguser",
+        email="registration@example.com",
+        password="Violet-Telescope-94!River",
+    )
+    serializer = RegisterSerializer(
+        data={
+            "username": "anotheruser",
+            "email": "Registration@Example.com",
+            "password": "Violet-Telescope-94!River",
+        }
+    )
+
+    assert not serializer.is_valid()
+    assert "email" in serializer.errors
