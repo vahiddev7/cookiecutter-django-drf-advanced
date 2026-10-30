@@ -56,7 +56,7 @@ jobs:
           urls = urls_path.read_text()
           urls = urls.replace(
               "urlpatterns = [",
-              'urlpatterns = [\\n    path("api/conflict/", include("apps.blog.urls")),',
+              'urlpatterns = [\n    path("api/conflict/", include("apps.blog.urls")),',
               1,
           )
           urls_path.write_text(urls)
