@@ -18,7 +18,13 @@ RUN pip install --no-cache-dir -r /app/requirements/production.txt
 
 COPY . /app/
 
+RUN groupadd --system app \
+    && useradd --system --gid app --home-dir /app --shell /usr/sbin/nologin app \
+    && chmod +x /app/docker/production/entrypoint.sh \
+    && chown -R app:app /app
+
+USER app
+
 EXPOSE 8000
 
-RUN chmod +x /app/docker/production/entrypoint.sh
 CMD ["./docker/production/entrypoint.sh"]
