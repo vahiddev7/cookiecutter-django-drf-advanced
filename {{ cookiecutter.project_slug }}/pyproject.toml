@@ -25,7 +25,7 @@ mssql-django = "2.0.0"
 
 {% if cookiecutter.use_drf == "y" %}
 djangorestframework = "3.17.1"
-djangorestframework-simplejwt = { version = "5.5.1", extras = ["crypto"] }
+djangorestframework-simplejwt = "5.5.1"
 django-filter = "25.2"
 {% endif %}
 
