@@ -5,7 +5,7 @@ A production-oriented, configurable project template for building maintainable D
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![Docker](https://img.shields.io/badge/Docker-supported-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![Cookiecutter](https://img.shields.io/badge/Cookiecutter-template- d4aa00)](https://cookiecutter.readthedocs.io/)
+[![Cookiecutter](https://img.shields.io/badge/Cookiecutter-template-d4aa00)](https://cookiecutter.readthedocs.io/)
 
 ## Why this template?
 
