@@ -1,367 +1,225 @@
-# 🚀 Django Clean Architecture Cookiecutter
+# Django DRF Advanced Cookiecutter
 
-<p align="center">
-  <b>Production-ready Django template for scalable backend systems</b><br/>
-  Built with clean architecture, best practices, and developer experience in mind.
-</p>
+A production-oriented, configurable project template for building maintainable Django backend applications. It provides a consistent starting point for project configuration, optional Django REST Framework support, Docker-based development, testing, and a modular application structure.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Django-5.2-green.svg" />
-  <img src="https://img.shields.io/badge/Python-3.10+-blue.svg" />
-  <img src="https://img.shields.io/badge/Docker-ready-blue.svg" />
-  <img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" />
-</p>
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Docker](https://img.shields.io/badge/Docker-supported-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Cookiecutter](https://img.shields.io/badge/Cookiecutter-template- d4aa00)](https://cookiecutter.readthedocs.io/)
 
----
+## Why this template?
 
-## 🎬 Demo
+Starting a backend project involves repeatedly making the same foundational decisions. This template packages those decisions into a configurable scaffold, so a team can spend more time on product behavior and less time on setup.
 
-> Coming soon (you can add a GIF here showing API usage or app generation)
+The template emphasizes:
 
----
+- **Modularity:** keep Django applications organized around clear responsibilities.
+- **Optional layers:** add services and selectors when they provide real value; avoid empty architectural placeholders.
+- **Configurable foundations:** choose database, API, documentation, Docker, and task-queue options during generation.
+- **Testability:** organize tests by scope inside each application.
+- **Operational awareness:** provide environment-based settings and container configuration as a starting point.
 
-## ✨ Why this template?
+## Features
 
-Most Django projects start simple… and become messy.
+- Django project scaffold with separated base, development, and production settings.
+- Optional Django REST Framework integration.
+- Optional API documentation configuration.
+- Configurable database selection: PostgreSQL, MySQL, SQLite, or SQL Server.
+- Optional Docker setup.
+- Optional Celery integration with Redis or RabbitMQ as the broker.
+- App-generation script that creates and registers a new Django application.
+- Per-app test layout for unit, integration, and end-to-end tests.
+- Optional authentication app when DRF is enabled.
 
-This template gives you a **solid foundation from day one**:
-
-* 🧱 Modular architecture with optional service and selector layers
-* 🔄 Scalable modular apps
-* 🧪 Built-in testing structure
-* ⚙️ Environment-based settings
-* 🐳 Docker-ready
-* 🔌 API-ready Django REST Framework foundation
-
----
-
-## 🧠 Architecture (Opinionated)
-
-```
-Command: Request → View → Serializer → Service → Model/ORM → DB
-Query:   Request → View → Selector → ORM → DB
-```
-
-### 🔹 Views
-
-Thin layer (just HTTP handling)
-
-### 🔹 Services
-
-Optional application logic for commands and write operations
-
-### 🔹 Selectors
-
-Optional reusable read queries; use them when query logic deserves a name or reuse
-
-### 🔹 Models
-
-Django models define persisted data, relationships, and model-level behavior.
-
-### 🔹 App boundaries
-
-- `users` owns the user model and user-related data.
-- `authentication` owns login, registration, and token flows; it is generated only when `use_drf=y`.
-- `config` wires apps together and owns project-wide settings.
-- Add services, selectors, serializers, and other modules only when they represent real behavior. Empty placeholder layers are intentionally not generated.
-
----
-
-## 📊 Architecture Diagram
-
-```
-                ┌──────────────┐
-                │    Client    │
-                └──────┬───────┘
-                       │
-                       ▼
-                ┌──────────────┐
-                │     View     │
-                └──────┬───────┘
-                       │
-        ┌──────────────┴──────────────┐
-        ▼                             ▼
-┌──────────────┐              ┌──────────────┐
-│   Service    │              │   Selector   │
-│ (write logic)│              │ (read logic) │
-└──────┬───────┘              └──────┬───────┘
-       │                             │
-       └──────────────┬──────────────┘
-                      ▼
-               ┌──────────────┐
-               │    Model     │
-               └──────────────┘
-                      │
-                      ▼
-               ┌──────────────┐
-               │   Database   │
-               └──────────────┘
-```
-
----
-
-## ⚡ Quick Start
+## Quick start
 
 ### 1. Install Cookiecutter
 
 ```bash
-pip install cookiecutter
+python -m pip install --upgrade cookiecutter
 ```
 
-### 2. Generate your project
+### 2. Generate a project
 
 ```bash
 cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced
 ```
 
-### 3. Run with Docker
+Cookiecutter asks for the project name and the options described below. It then creates a new project directory using your answers.
+
+### 3. Configure environment variables
+
+The generated project includes an `.env.example`. The post-generation hook creates a local `.env` file and generates a Django secret key when appropriate. Review the generated values—especially database credentials and service URLs—before starting the application.
+
+Do not commit your real `.env` file or production secrets.
+
+### 4. Start the project
+
+If you enabled Docker, run the command from the generated project directory:
 
 ```bash
 docker compose up --build
 ```
 
-Cookiecutter creates a local `.env` from `.env.example` after generation and fills in a fresh Django `SECRET_KEY`. It never overwrites an existing `.env`. Before starting Docker, review the database values in `.env` for the selected database engine. The generated `.env` is ignored by Git and should not be committed.
+For projects generated without Docker, install the development dependencies and follow the generated project's settings and application entry points.
 
----
+## Configuration options
 
-## 📁 Project Structure
+The Cookiecutter prompts let you tailor the generated project:
 
+| Option | Choices / behavior |
+| --- | --- |
+| Django REST Framework | Enable or disable DRF |
+| API documentation | Select whether to include the configured Swagger/OpenAPI support |
+| Docker | Enable or disable the Docker setup |
+| Database | PostgreSQL, MySQL, SQLite, or SQL Server |
+| Celery | Enable or disable background task processing |
+| Celery broker | Redis or RabbitMQ, when Celery is enabled |
+
+The authentication application is generated only when DRF is enabled. Optional features should be selected based on the requirements of the project being generated.
+
+## Architecture
+
+The template encourages a clear separation between HTTP handling, application behavior, and data access without forcing every layer into every app.
+
+### Command / write flow
+
+```text
+Request -> View -> Serializer -> Service -> Model / ORM -> Database
 ```
-apps/
-  authentication/
-    serializers/
-    services/
-    views/
-    tests/
-  users/
-    models/
-    migrations/
-    tests/
 
-config/
-  settings/
-    base.py
-    dev.py
-    prod.py
+### Query / read flow
+
+```text
+Request -> View -> Selector -> ORM -> Database
 ```
 
----
+- **Views** handle HTTP concerns and coordinate the request/response lifecycle.
+- **Serializers** validate and represent API data when DRF is enabled.
+- **Services** hold application or business operations when the logic benefits from being separated from the view.
+- **Selectors** encapsulate reusable or sufficiently complex read queries.
+- **Models** represent persisted domain data and Django ORM behavior.
 
-## 🧩 Create New App (🔥 Killer Feature)
+Services and selectors are conventions, not mandatory layers. Keep simple behavior simple; introduce an abstraction when it improves clarity, reuse, or testability.
+
+## Generated project structure
+
+The exact structure depends on the selected options. A typical generated project follows this general layout:
+
+```text
+.
+├── apps/
+│   ├── users/
+│   └── authentication/       # generated when DRF is enabled
+├── config/
+│   ├── settings/
+│   │   ├── base.py
+│   │   ├── dev.py
+│   │   └── prod.py
+│   └── ...
+├── docker/
+├── requirements/
+├── scripts/
+├── .env.example
+├── docker-compose.yml
+└── manage.py
+```
+
+Treat this as an overview rather than a promise that every optional directory exists in every generated configuration.
+
+## Create a new Django app
+
+Generated projects include an app-generation script:
 
 ```bash
 ./scripts/start_app.sh blog
 ```
 
-Generates:
+The script creates the Django app essentials, registers the app in `INSTALLED_APPS`, and includes its URL module under the API routing structure. Add models, endpoints, migrations, and any additional modules required by the app.
 
-```
-apps/blog/
-  apps.py
-  admin.py
-  urls.py
-  models/
-  migrations/
-  tests/
-    unit/
-    integration/
-    e2e/
-```
+Create `services/`, `selectors/`, `serializers/`, `permissions/`, or `views/` only when the app needs them. These modules are not required just to satisfy a directory convention.
 
-The script creates only the Django app essentials and test-scope folders. Add `services/`, `selectors/`, `serializers/`, `permissions/`, or `views/` when the app actually needs them; they are conventions, not mandatory layers. The script also registers `apps.<app_name>` in `INSTALLED_APPS` and includes its URL module under `/api/<app_name>/`. Add endpoint patterns to `apps/<app_name>/urls.py`, then define models and run migrations as needed.
+## Authentication
 
----
-
-## 🔐 Authentication Included
-
-When `use_drf=y`, the generated project exposes these endpoints:
+When DRF is enabled, the generated authentication app provides the configured registration and JWT authentication endpoints. The current scaffold includes:
 
 | Method | Endpoint | Purpose |
-|---|---|---|
-| `POST` | `/api/auth/register/` | Create an account with username, email, and password |
-| `POST` | `/api/auth/login/` | Obtain a JWT access/refresh token pair |
-| `POST` | `/api/auth/token/` | Backwards-compatible alias for JWT token obtain |
+| --- | --- | --- |
+| `POST` | `/api/auth/register/` | Register an account |
+| `POST` | `/api/auth/login/` | Obtain an access/refresh token pair |
+| `POST` | `/api/auth/token/` | Token-obtain compatibility endpoint |
 | `POST` | `/api/auth/token/refresh/` | Refresh an access token |
 
-Registration requires a unique email address (case-insensitive) and a username. Email addresses are trimmed and stored in lowercase. Passwords are validated with Django's configured password validators; the password is write-only and is never included in the response. Login accepts the username/password fields expected by SimpleJWT.
+Registration validates the submitted account data and password using the generated Django configuration. Review the generated authentication settings and permissions before exposing an application publicly.
 
----
+## Testing
 
-## ⚙️ Configuration
+Tests live inside the application they cover and are grouped by scope:
 
-During setup:
-
-```json
-{
-  "project_name": "My Project",
-  "project_slug": "my_project",
-  "use_drf": "y",
-  "use_swagger": ["y", "n"],
-  "use_docker": "y",
-  "database_engine": ["postgresql", "mysql", "sqlite", "sqlserver"],
-  "use_celery": ["y", "n"],
-  "celery_broker": ["redis", "rabbitmq"]
-}
+```text
+apps/
+└── example/
+    └── tests/
+        ├── unit/
+        ├── integration/
+        └── e2e/
 ```
 
----
+- **Unit tests** check focused behavior in isolation.
+- **Integration tests** check interactions between components, such as services and database access.
+- **End-to-end tests** exercise complete user-facing flows.
 
-## 📦 Dependency installation
-
-The generated project supports two installation workflows:
-
-- **pip:** use `requirements/develop.txt` for local development and `requirements/production.txt` for a production image.
-- **Poetry:** use `poetry install --with test,dev` for development, or `poetry install --only main,production` for a production environment.
-
-The Poetry production group includes Gunicorn, matching `requirements/production.txt`. When changing a dependency version or an optional feature, keep the corresponding pip and Poetry declarations aligned.
-
-## 🧪 Testing
+Run the test suite from the generated project root:
 
 ```bash
 pytest
 ```
 
-Each app keeps its own tests in `apps/<app_name>/tests/`, organized by test scope:
+The available test configuration and dependencies depend on the selected project options.
 
-* `unit/`
-* `integration/`
-* `e2e/`
+## Dependency management
 
----
+The generated project provides pip requirements and Poetry configuration. Use the development dependency set while working locally and the production dependency set for deployment. When changing dependencies or optional features, keep the pip and Poetry declarations consistent.
 
-## 🐳 Docker
+## Deployment and security notes
 
-Includes:
+This template is a starting point, not a substitute for a deployment security review.
 
-* Dev environment
-* Production setup
-* Nginx config
+- Store secrets in environment variables or a dedicated secret manager; never commit credentials.
+- Use HTTPS in production and configure trusted proxy headers only when the reverse proxy overwrites them.
+- Keep database and message-broker ports private; expose only the services that must be reachable.
+- Configure CORS and CSRF trusted origins explicitly for the frontend origins you operate.
+- Review default API permissions, authentication settings, allowed hosts, cookie settings, and throttling before deployment.
+- Apply migrations and test the selected database backend in an environment representative of production.
 
----
+Some database backends have different capabilities and may require different authentication or migration behavior. Verify the generated settings for the database option you choose.
 
-## 🌍 Environment Settings
+## Contributing
 
-```
-settings/
-  base.py
-  dev.py
-  prod.py
-```
+Issues, bug reports, and focused pull requests are welcome.
 
----
+When proposing a change:
 
-## 💡 When to Use
+1. Explain the problem and the expected behavior.
+2. Keep optional feature combinations working.
+3. Add or update tests for changed behavior.
+4. Update the documentation when prompts, generated files, or setup steps change.
 
-✅ Large-scale backend systems
-✅ Team projects
-✅ Clean architecture lovers
+## Roadmap
 
----
+Potential areas for future improvement include:
 
-## ⚠️ When NOT to Use
+- More example projects generated from different option combinations.
+- Expanded deployment and observability documentation.
+- Additional integration coverage for optional feature combinations.
+- A first stable tagged release with a documented compatibility matrix.
 
-❌ Simple scripts
-❌ Small MVPs
+## License
 
----
-
-## 🧠 Philosophy
-
-This template is **opinionated**.
-
-It favors:
-
-* long-term maintainability
-* scalability
-* clear separation of concerns
-
-over quick-and-dirty setups.
+This repository currently does not contain a license file. Until a license is added, the project should not be assumed to grant permission to reuse, modify, or redistribute its contents. A license should be selected and added explicitly by the repository owner.
 
 ---
 
-## 🗺 Roadmap
+If this template is useful, consider starring the repository and sharing feedback through GitHub Issues.
 
-* [x] Add CI/CD pipeline
-* [ ] Add GraphQL option
-* [ ] Add lightweight mode
-* [ ] Add project CLI
-
----
-
-## 🤝 Contributing
-
-PRs, issues, and ideas are welcome.
-
----
-
-## ⭐ Support
-
-If this project helps you, give it a star ⭐
-It helps others discover it.
-
-
-### Per-app test layout
-
-Each app owns its tests under `apps/<app_name>/tests/`, grouped by test scope:
-
-```text
-tests/
-  unit/
-  integration/
-  e2e/
-```
-
-- **Unit:** test a small piece of behavior in isolation.
-- **Integration:** test interactions between components, such as database queries and services.
-- **E2E:** test complete user-facing flows through the application.
-
-Keep tests close to the app they cover. Create test files and subpackages only when they are needed; the app generator creates the three scope directories without pre-populating empty categories. Run the suite from the generated project root with `pytest`.
-
-
-
-### Docker Compose network exposure and HTTPS
-
-The production Compose template publishes only Nginx on host port `80`. The application, database, and Celery broker services communicate over the private Compose network; their ports are not published directly to the host. This avoids exposing database listeners, Gunicorn, or the RabbitMQ management UI on every host interface by default.
-
-For production deployments, terminate HTTPS at a trusted reverse proxy or load balancer and forward traffic to Nginx. Nginx passes the upstream `X-Forwarded-Proto` value through to Django; it does not infer the original scheme from its own HTTP connection. The trusted proxy must overwrite this header, and a host firewall or security group must restrict Nginx's published port so only that proxy can reach it. Never enable `TRUST_PROXY_SSL_HEADER=True` while untrusted clients can connect directly to Nginx. If you need to access a database or the RabbitMQ management UI from your own machine for development, use a separate local-only Compose override that binds the required port to `127.0.0.1`, and do not use that override in production.
-
-
-### SQL Server and refresh-token rotation
-
-The SQL Server option uses a different SimpleJWT refresh-token policy. The SQL Server Django backend does not support altering an existing `AutoField` to `BigAutoField`, while SimpleJWT's token-blacklist migration performs that change. To keep SQL Server migrations executable, generated SQL Server projects omit the blacklist app and disable refresh-token rotation. Refresh tokens therefore remain valid until their configured expiry and cannot be revoked through SimpleJWT's blacklist. Other supported database engines keep refresh-token rotation and blacklisting enabled.
-
-If refresh-token revocation is a requirement, use PostgreSQL or MySQL with the default configuration, or implement and test a SQL Server-specific token-blacklist migration before enabling it. See the [Microsoft SQL Server Django migration limitations](https://learn.microsoft.com/en-us/sql/connect/python/mssql-django/migrations?view=sql-server-ver17).
-
-### Production HTTPS and browser security
-
-The production settings enable secure session and CSRF cookies, MIME-sniffing protection, clickjacking protection, and a restrictive referrer policy. Serve the application exclusively over HTTPS in production.
-
-HTTPS redirect and HSTS are explicit deployment choices:
-
-- Set `SECURE_SSL_REDIRECT=True` only after HTTPS is configured and every request reaching Django is correctly recognized as HTTPS.
-- If TLS terminates at a trusted reverse proxy or load balancer, set `TRUST_PROXY_SSL_HEADER=True` only when that proxy **overwrites** the `X-Forwarded-Proto` header before forwarding requests. Never trust this header from arbitrary clients.
-- Set `SECURE_HSTS_SECONDS` to a positive value only after HTTPS works reliably. Increase it gradually; enable subdomains or preload only when every affected hostname supports HTTPS.
-
-The defaults keep redirect and HSTS disabled to avoid redirect loops or accidentally locking a domain into HTTPS before its infrastructure is ready. The secure-cookie defaults still require HTTPS for normal production browser sessions.
-
-
-### CORS and CSRF trusted origins
-
-Cross-origin browser access is disabled by default. If a separate frontend needs browser access to the API, set `CORS_ALLOWED_ORIGINS` to an explicit comma-separated list of full origins, including the scheme and port where applicable (for example, `https://frontend.example.com`). Do not use `*` as a production shortcut.
-
-`CSRF_TRUSTED_ORIGINS` is a separate Django setting. Configure it only when a trusted frontend needs to submit cookie/session-authenticated unsafe requests across origins; list full origins including `https://`. CORS permission does not grant CSRF trust, and CSRF trust does not grant CORS access.
-
-Keep `CORS_ALLOW_CREDENTIALS=False` unless the browser must send cookies or other credentials cross-origin. When credentials are enabled, continue using explicit origins and normal CSRF protections.
-
-
-### Shared cache and API throttling
-
-The default Django cache uses the database-backed cache table `django_cache`, created by the core app's initial migration. This gives all Gunicorn workers a shared cache and keeps DRF's built-in login and registration throttling counters consistent across processes without requiring Redis.
-
-Database-backed caching is a practical default for a starter project and low-to-moderate traffic. For higher-throughput deployments, replace the cache backend with a shared Redis service and install the Redis Python client; do not switch to per-process `LocMemCache` when relying on throttling across multiple workers.
-
-### Default API permissions
-
-When Django REST Framework is enabled, API views require an authenticated user by default through `IsAuthenticated`. This is a secure baseline for new endpoints: explicitly use `AllowAny` only for intentionally public views.
-
-The built-in registration, login, and JWT refresh endpoints are explicitly public because they must be reachable before a user has an access token. Keep authorization decisions close to each view and add object-level permissions where users must only access their own resources.
+**Repository:** [vahiddev7/cookiecutter-django-drf-advanced](https://github.com/vahiddev7/cookiecutter-django-drf-advanced)
