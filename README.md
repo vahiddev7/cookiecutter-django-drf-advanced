@@ -31,6 +31,7 @@ The template emphasizes:
 - Optional Celery integration with Redis or RabbitMQ as the broker.
 - Console logging with a dedicated, environment-configurable logging configuration.
 - Optional Sentry error monitoring with configurable environment and performance sampling.
+- Optional cloud object storage for media and static assets (AWS S3, Google Cloud Storage, or Azure Blob Storage).
 - App-generation script that creates and registers a new Django application.
 - Per-app test layout for unit, integration, and end-to-end tests.
 - Optional authentication app when DRF is enabled.
@@ -80,6 +81,7 @@ The Cookiecutter prompts let you tailor the generated project:
 | Celery | Enable or disable background task processing |
 | Celery broker | Redis or RabbitMQ, when Celery is enabled |
 | Sentry | Enable or disable Sentry error monitoring |
+| Cloud storage | Local filesystem, AWS S3, Google Cloud Storage, or Azure Blob Storage |
 
 The authentication application is generated only when DRF is enabled. Optional features should be selected based on the requirements of the project being generated.
 
@@ -162,6 +164,14 @@ Registration validates the submitted account data and password using the generat
 Logging is configured in `config/settings/logging_config.py` and imported by the base settings module. Set `LOG_LEVEL` in the environment to adjust console verbosity. The default is `INFO`.
 
 Sentry is opt-in at project generation (`use_sentry=y`). When enabled, install the generated dependencies and set `SENTRY_DSN` in the deployment environment. An empty DSN leaves Sentry disabled. Configure `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`, and `SENTRY_PROFILES_SAMPLE_RATE` to match your monitoring and quota requirements. `SENTRY_SEND_DEFAULT_PII` defaults to `False`; review privacy requirements before changing it.
+
+## Cloud storage
+
+Choose `none` to keep uploaded media and collected static files on the local filesystem, or select `s3`, `gcloud`, or `azure` during project generation. The generated `config/settings/storage.py` keeps provider configuration separate from the base settings module and configures media and static files independently.
+
+Set the provider-specific variables in the deployment environment (see `.env.example`). For AWS, instance/task roles are preferred to long-lived access keys; an endpoint URL can be supplied for S3-compatible services. Google Cloud Storage uses Application Default Credentials. Azure credentials should also be supplied through a secret manager or workload identity where supported.
+
+Run `python manage.py collectstatic` after configuring the selected provider. Ensure the bucket/container permissions, CORS rules, and public/private access policy match your application. Do not commit cloud credentials.
 
 ## Testing
 
