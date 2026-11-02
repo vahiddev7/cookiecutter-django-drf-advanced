@@ -4,7 +4,9 @@ from pathlib import Path
 
 from config.settings.env import env
 from .logging_config import LOGGING
+{% if cookiecutter.cloud_storage != "none" %}
 from .storage import STORAGES
+{% endif %}
 
 {% if cookiecutter.use_sentry == "y" %}
 from .sentry import configure_sentry
