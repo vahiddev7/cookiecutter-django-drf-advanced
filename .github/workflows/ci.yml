@@ -186,7 +186,7 @@ jobs:
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: >-
           docker compose run --rm --no-deps app
-          sh -c "pip install pytest pytest-django && pytest -q"
+          sh -c "python -m pip install --user pytest pytest-django && python -m pytest -q"
 
       - name: Stop Docker services
         if: always() && matrix.use_docker == 'y'

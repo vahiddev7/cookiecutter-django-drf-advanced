@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quick Start: Generate a Django Project | Django DRF Advanced</title>
+<meta name="description" content="Step-by-step instructions to install Cookiecutter and generate a Django REST Framework project from the Django DRF Advanced template.">
+<meta name="robots" content="index,follow"><link rel="canonical" href="https://vahiddev7.github.io/cookiecutter-django-drf-advanced/quickstart.html"><link rel="stylesheet" href="assets/site.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="./">Django DRF Advanced</a><nav aria-label="Main navigation"><a href="quickstart.html">Quick start</a><a href="configuration.html">Configuration</a><a href="architecture.html">Architecture</a><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">GitHub</a></nav></div></header>
+<main><div class="container content"><p class="breadcrumbs"><a href="./">Home</a> / Quick start</p><p class="eyebrow">Getting started</p><h1>Generate a Django project with Cookiecutter</h1>
+<p>This guide walks through creating a new Django backend from the Django DRF Advanced Cookiecutter template.</p>
+<h2>1. Install Cookiecutter</h2><p>Use Python's package installer to install Cookiecutter:</p><pre><code>python -m pip install --upgrade cookiecutter</code></pre>
+<h2>2. Generate the project</h2><p>Run Cookiecutter with the template repository URL:</p><pre><code>cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced</code></pre>
+<p>Answer the prompts to choose a project name and optional integrations. See the <a href="configuration.html">configuration guide</a> for an overview of the available options.</p>
+<h2>3. Review environment settings</h2><p>The generated project includes an <code>.env.example</code>. Review the generated local environment values, database credentials, and service URLs before running the application. Never commit production secrets or a real <code>.env</code> file.</p>
+<h2>4. Start the project</h2><p>If Docker was enabled during generation, start the containers from the generated project directory:</p><pre><code>docker compose up --build</code></pre>
+<p>If Docker was not selected, install the generated development dependencies and follow the project's local setup instructions.</p>
+<h2>5. Create an application</h2><p>Generated projects include an app-generation script. For example:</p><pre><code>./scripts/start_app.sh blog</code></pre>
+<p>Review the generated application and add only the modules needed for its responsibilities.</p>
+<div class="note">Before production use, review allowed hosts, secret management, database access, API permissions, CORS, CSRF, HTTPS, and deployment-specific settings.</div>
+<p>Next: <a href="architecture.html">understand the project architecture</a> or return to the <a href="./">documentation home</a>.</p>
+</div></main><footer class="site-footer"><div class="container"><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">Source code on GitHub</a></div></footer></body></html>

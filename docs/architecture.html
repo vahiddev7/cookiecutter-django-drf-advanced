@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Django Backend Architecture Guide | Django DRF Advanced</title>
+<meta name="description" content="Understand the modular Django backend architecture used by the template, including views, serializers, services, selectors, models, and per-app tests.">
+<meta name="robots" content="index,follow"><link rel="canonical" href="https://vahiddev7.github.io/cookiecutter-django-drf-advanced/architecture.html"><link rel="stylesheet" href="assets/site.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="./">Django DRF Advanced</a><nav aria-label="Main navigation"><a href="quickstart.html">Quick start</a><a href="configuration.html">Configuration</a><a href="architecture.html">Architecture</a><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">GitHub</a></nav></div></header>
+<main><div class="container content"><p class="breadcrumbs"><a href="./">Home</a> / Architecture</p><p class="eyebrow">Design overview</p><h1>A modular architecture for Django applications</h1>
+<p>The template encourages clear responsibilities without requiring every application to contain every possible layer. Introduce an abstraction when it improves readability, reuse, or testability.</p>
+<h2>Write and command flow</h2><pre><code>HTTP Request
+    |
+    v
+   View
+    |
+    v
+Serializer (validation)
+    |
+    v
+  Service
+    |
+    v
+ Model / ORM
+    |
+    v
+ Database</code></pre>
+<h2>Read and query flow</h2><pre><code>HTTP Request
+    |
+    v
+   View
+    |
+    v
+ Selector
+    |
+    v
+   ORM
+    |
+    v
+ Database</code></pre>
+<h2>Layer responsibilities</h2><ul><li><strong>Views:</strong> handle HTTP concerns and coordinate request and response behavior.</li><li><strong>Serializers:</strong> validate and represent API data when DRF is enabled.</li><li><strong>Services:</strong> encapsulate application operations and business workflows when separation is useful.</li><li><strong>Selectors:</strong> keep reusable or complex read queries out of views.</li><li><strong>Models:</strong> represent persisted data and Django ORM behavior.</li></ul>
+<h2>Test organization</h2><p>Tests are organized by scope within each Django application:</p><pre><code>apps/
+└── example/
+    └── tests/
+        ├── unit/
+        ├── integration/
+        └── e2e/</code></pre>
+<p>Unit tests focus on isolated behavior, integration tests verify interactions between components and infrastructure, and end-to-end tests exercise complete flows.</p>
+<div class="note">Avoid creating empty services, selectors, permissions, or serializer modules solely to match a convention. Keep simple code simple.</div>
+<p>See the <a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">repository README</a> for the complete feature overview.</p>
+</div></main><footer class="site-footer"><div class="container"><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">Source code on GitHub</a></div></footer></body></html>
