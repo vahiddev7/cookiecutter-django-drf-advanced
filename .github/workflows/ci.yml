@@ -115,6 +115,7 @@ jobs:
           USE_DRF: ${{ matrix.use_drf }}
           USE_SWAGGER: ${{ matrix.use_swagger }}
           USE_CELERY: ${{ matrix.use_celery }}
+          USE_SENTRY: ${{ matrix.use_sentry }}
           CLOUD_STORAGE: ${{ matrix.cloud_storage }}
           DATABASE_ENGINE: ${{ matrix.database_engine }}
         run: |
@@ -147,6 +148,15 @@ jobs:
           from config.settings.base import LOGGING
           assert LOGGING["version"] == 1
           assert "console" in LOGGING["handlers"]
+          sentry_settings = Path("config/settings/sentry.py")
+          base_settings = Path("config/settings/base.py").read_text()
+          if os.environ["USE_SENTRY"] == "n":
+              assert not sentry_settings.exists()
+              assert "from .sentry import configure_sentry" not in base_settings
+          else:
+              assert sentry_settings.is_file()
+              assert "from .sentry import configure_sentry" in base_settings
+
           storage_settings = Path("config/settings/storage.py")
           if os.environ["CLOUD_STORAGE"] == "none":
               assert not storage_settings.exists()
