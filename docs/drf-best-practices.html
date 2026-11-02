@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Django REST Framework Best Practices | Django DRF Advanced</title>
+  <meta name="description" content="Practical Django REST Framework best practices for serializers, permissions, querysets, pagination, performance, testing, and production security.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://vahiddev7.github.io/cookiecutter-django-drf-advanced/drf-best-practices.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Django REST Framework Best Practices">
+  <meta property="og:description" content="A practical checklist for building maintainable, secure, and efficient Django REST Framework APIs.">
+  <meta property="og:url" content="https://vahiddev7.github.io/cookiecutter-django-drf-advanced/drf-best-practices.html">
+  <link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<header class="site-header"><div class="header-inner">
+  <a class="brand" href="./">Django DRF Advanced</a>
+  <nav aria-label="Main navigation"><a href="quickstart.html">Quick start</a><a href="configuration.html">Configuration</a><a href="architecture.html">Architecture</a><a href="drf-best-practices.html">DRF best practices</a><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">GitHub</a></nav>
+</div></header>
+<main><div class="container content">
+  <p class="breadcrumbs"><a href="./">Home</a> / Django REST Framework best practices</p>
+  <p class="eyebrow">API engineering guide</p>
+  <h1>Django REST Framework best practices</h1>
+  <p>Good API design is more than adding serializers and viewsets. A maintainable Django REST Framework (DRF) API makes access rules explicit, validates input at the boundary, keeps database work predictable, and tests the behavior clients depend on. Use this checklist as a starting point and adapt it to your application's requirements.</p>
+
+  <h2>1. Keep each layer focused</h2>
+  <p>Use views or viewsets to coordinate HTTP behavior, serializers to validate and represent data, and models for persistence and domain constraints. Move multi-step business workflows into service functions when doing so makes them easier to reuse or test. Put complex reusable read queries in selectors or dedicated queryset methods.</p>
+  <p>Do not create a service or selector for every single line of code. Simple logic can stay close to the view or model when that is clearer. See the <a href="architecture.html">architecture overview</a> for the conventions used by this template.</p>
+
+  <h2>2. Make permissions explicit</h2>
+  <p>Authentication answers who a caller is; permissions answer what that caller may do. Configure deliberate default permission classes and set object-level checks where access depends on ownership or another relationship. Do not assume that hiding a button in a frontend protects an endpoint.</p>
+  <p>For list endpoints, filter the queryset so users only receive records they are allowed to see. Object permissions alone do not automatically remove unauthorized objects from every list response. Test both detail and list access paths.</p>
+
+  <h2>3. Validate input with serializers</h2>
+  <p>Use serializers to define accepted fields, types, required values, and cross-field validation. Prefer explicit writable fields over exposing every model field by default. Keep read-only fields such as ownership, server-generated timestamps, and other trusted values under server control.</p>
+  <p>When creating or updating related objects, validate that referenced objects are available to the current user where applicable. Return clear validation errors without exposing secrets, internal stack traces, or sensitive implementation details.</p>
+
+  <h2>4. Make querysets safe and efficient</h2>
+  <p>Start from a queryset constrained to the caller's access scope. Apply filtering and ordering deliberately, and avoid allowing arbitrary client input to become raw ORM expressions or SQL fragments.</p>
+  <ul>
+    <li>Use <code>select_related()</code> for appropriate single-valued foreign-key and one-to-one relationships.</li>
+    <li>Use <code>prefetch_related()</code> for appropriate many-to-many and reverse relationships.</li>
+    <li>Use pagination for potentially large collections.</li>
+    <li>Inspect query counts and profile slow endpoints before optimizing.</li>
+  </ul>
+  <p>These practices help prevent N+1 query patterns, but the right loading strategy depends on the response shape and data volume.</p>
+
+  <h2>5. Define stable API behavior</h2>
+  <p>Choose a consistent response format, status-code policy, filtering behavior, and pagination style. Document which fields are nullable, which values are writable, and how clients should handle validation errors. Avoid changing the meaning or type of an existing response field without considering compatibility.</p>
+  <p>If the API is consumed by other teams or public clients, plan versioning and deprecation before making breaking changes. Generate and review an OpenAPI schema so the published contract matches the implemented endpoints.</p>
+
+  <h2>6. Test authorization and edge cases</h2>
+  <p>Test more than the successful request. Include unauthenticated requests, authenticated users with insufficient permissions, attempts to access another user's objects, invalid payloads, missing related records, empty results, and pagination boundaries.</p>
+  <p>DRF's <code>APIClient</code> and <code>APITestCase</code> can help exercise endpoints at the HTTP layer. Keep unit tests for isolated business rules and integration tests for behavior involving the database or other components.</p>
+
+  <h2>7. Review production security settings</h2>
+  <ul>
+    <li>Use HTTPS and secure cookie settings appropriate to your deployment.</li>
+    <li>Keep secret keys, database credentials, and signing secrets out of source control.</li>
+    <li>Set allowed hosts, CORS, and CSRF trusted origins deliberately for the deployed environment.</li>
+    <li>Choose authentication and token lifetimes based on the application's threat model.</li>
+    <li>Apply throttling where it helps manage ordinary client usage, but do not treat application throttling as a complete denial-of-service defense.</li>
+    <li>Keep Django, DRF, and dependencies updated, and review security advisories.</li>
+  </ul>
+
+  <h2>Before shipping an endpoint</h2>
+  <ul>
+    <li>Is the queryset restricted to records the caller may access?</li>
+    <li>Are permissions explicit for list, create, update, and delete operations?</li>
+    <li>Are writable serializer fields intentionally selected?</li>
+    <li>Are large result sets paginated?</li>
+    <li>Have query performance and N+1 behavior been checked?</li>
+    <li>Are success, validation, and authorization cases covered by tests?</li>
+    <li>Does the API schema describe the actual behavior?</li>
+  </ul>
+
+  <h2>Further reading</h2>
+  <ul>
+    <li><a href="https://www.django-rest-framework.org/api-guide/serializers/">DRF serializers documentation</a></li>
+    <li><a href="https://www.django-rest-framework.org/api-guide/permissions/">DRF permissions documentation</a></li>
+    <li><a href="https://www.django-rest-framework.org/api-guide/pagination/">DRF pagination documentation</a></li>
+    <li><a href="https://docs.djangoproject.com/en/stable/topics/db/optimization/">Django database optimization</a></li>
+  </ul>
+  <p>To try the template, follow the <a href="quickstart.html">quick start guide</a> and choose the optional DRF integration when generating your project.</p>
+</div></main>
+<footer class="site-footer"><div class="container">Open-source project template · <a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">GitHub repository</a></div></footer>
+</body></html>
