@@ -61,6 +61,15 @@ if not env_file.exists() and env_example.exists():
             f"{key}={value}\n" for key, value in database_settings.items()
         )
 
+    if cloud_storage == "silo":
+        silo_user = "silo_" + secrets.token_hex(8)
+        silo_password = secrets.token_urlsafe(40)
+        content += "\n# Local Silo credentials (use dedicated scoped credentials in production)\n"
+        content += f"AWS_ACCESS_KEY_ID={silo_user}\n"
+        content += f"AWS_SECRET_ACCESS_KEY={silo_password}\n"
+        content += f"MINIO_ROOT_USER={silo_user}\n"
+        content += f"MINIO_ROOT_PASSWORD={silo_password}\n"
+
     if "{{ cookiecutter.use_celery }}" == "y" and "{{ cookiecutter.celery_broker }}" == "rabbitmq":
         rabbitmq_user = "app_" + secrets.token_hex(8)
         rabbitmq_password = secrets.token_urlsafe(32)

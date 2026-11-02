@@ -24,6 +24,8 @@ persiantools==5.5.0
 
 {% if cookiecutter.cloud_storage == "s3" %}
 boto3>=1.34.0
+{% elif cookiecutter.cloud_storage == "silo" %}
+boto3>=1.34.0
 {% elif cookiecutter.cloud_storage == "gcloud" %}
 google-cloud-storage>=2.16.0
 {% elif cookiecutter.cloud_storage == "azure" %}

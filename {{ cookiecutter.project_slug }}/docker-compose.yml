@@ -72,6 +72,48 @@ services:
       - {{ cookiecutter.project_slug }}_network
   {% endif %}
 
+  {% if cookiecutter.cloud_storage == 'silo' %}
+  silo:
+    image: docker.io/pgsty/silo:RELEASE.2026-10-26T00-00-00Z
+    container_name: {{ cookiecutter.project_slug }}_silo
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - silo_data:/data
+    healthcheck:
+      test: ["CMD", "silo", "healthcheck", "ready"]
+      interval: 30s
+      timeout: 10s
+      start_period: 2m
+      retries: 3
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  silo-init:
+    image: python:3.12-alpine
+    container_name: {{ cookiecutter.project_slug }}_silo_init
+    command: ["sh", "-c", "pip install --no-cache-dir boto3 && python /silo-init.py"]
+    environment:
+      AWS_S3_ENDPOINT_URL: http://silo:9000
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+      AWS_DEFAULT_REGION: us-east-1
+    volumes:
+      - ./docker/silo-init.py:/silo-init.py:ro
+    depends_on:
+      silo:
+        condition: service_healthy
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+  {% endif %}
+
   migrate:
     build:
       context: .
@@ -93,14 +135,19 @@ services:
       {% if cookiecutter.database_engine == 'sqlite' %}
       - sqlite_data:/app/data
       {% endif %}
-    {% if cookiecutter.database_engine == 'sqlserver' %}
+    {% if cookiecutter.cloud_storage == 'silo' or cookiecutter.database_engine != 'sqlite' %}
     depends_on:
+      {% if cookiecutter.cloud_storage == 'silo' %}
+      silo-init:
+        condition: service_completed_successfully
+      {% endif %}
+      {% if cookiecutter.database_engine == 'sqlserver' %}
       db-init:
         condition: service_completed_successfully
-    {% elif cookiecutter.database_engine != 'sqlite' %}
-    depends_on:
+      {% elif cookiecutter.database_engine != 'sqlite' %}
       db:
         condition: service_healthy
+      {% endif %}
     {% endif %}
     networks:
       - {{ cookiecutter.project_slug }}_network
@@ -244,6 +291,9 @@ volumes:
   static_data:
   media_data:
   nginx_logs:
+  {% if cookiecutter.cloud_storage == 'silo' %}
+  silo_data:
+  {% endif %}
 
 networks:
   {{ cookiecutter.project_slug }}_network:

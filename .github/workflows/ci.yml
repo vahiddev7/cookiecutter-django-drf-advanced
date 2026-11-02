@@ -31,6 +31,15 @@ jobs:
             use_sentry: y
             cloud_storage: s3
             celery_broker: redis
+          - name: sqlite-silo-storage
+            database_engine: sqlite
+            use_drf: y
+            use_swagger: n
+            use_docker: y
+            use_celery: n
+            use_sentry: n
+            cloud_storage: silo
+            celery_broker: redis
           - name: sqlite-without-drf
             database_engine: sqlite
             use_drf: n
@@ -161,11 +170,23 @@ jobs:
           if os.environ["CLOUD_STORAGE"] == "none":
               assert not storage_settings.exists()
               assert "from .storage import STORAGES" not in Path("config/settings/base.py").read_text()
-          elif os.environ["CLOUD_STORAGE"] == "s3":
+          elif os.environ["CLOUD_STORAGE"] in {"s3", "silo"}:
               assert storage_settings.is_file()
               from config.settings.base import STORAGES
               assert STORAGES["default"]["BACKEND"] == "storages.backends.s3.S3Storage"
               assert STORAGES["staticfiles"]["BACKEND"] == "storages.backends.s3.S3Storage"
+              if os.environ["CLOUD_STORAGE"] == "silo":
+                  compose = Path("docker-compose.yml").read_text()
+                  env_file = Path(".env").read_text()
+                  assert "pgsty/silo:RELEASE.2026-10-26T00-00-00Z" in compose
+                  assert "silo-init:" in compose
+                  assert "./docker/silo-init.py:/silo-init.py:ro" in compose
+                  assert Path("docker/silo-init.py").is_file()
+                  assert "silo_data:/data" in compose
+                  assert "MINIO_ROOT_USER=silo_" in env_file
+                  assert "MINIO_ROOT_PASSWORD=" in env_file
+                  assert "AWS_ACCESS_KEY_ID=silo_" in env_file
+                  assert "AWS_SECRET_ACCESS_KEY=" in env_file
 
           if os.environ["USE_DRF"] == "n" or os.environ["USE_SWAGGER"] == "n":
               assert not Path("static/swagger").exists()
