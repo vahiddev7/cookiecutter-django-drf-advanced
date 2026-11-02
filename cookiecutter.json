@@ -8,5 +8,6 @@
   "database_engine": ["postgresql", "mysql", "sqlite", "sqlserver"],
   "use_celery": ["y", "n"],
   "use_sentry": ["n", "y"],
+  "cloud_storage": ["none", "s3", "gcloud", "azure"],
   "celery_broker": ["redis", "rabbitmq"]
 }

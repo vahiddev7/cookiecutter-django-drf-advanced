@@ -22,6 +22,14 @@ pillow==12.2.0
 requests==2.33.1
 persiantools==5.5.0
 
+{% if cookiecutter.cloud_storage == "s3" %}
+boto3>=1.34.0
+{% elif cookiecutter.cloud_storage == "gcloud" %}
+google-cloud-storage>=2.16.0
+{% elif cookiecutter.cloud_storage == "azure" %}
+azure-storage-blob>=12.19.0
+{% endif %}
+
 {% if cookiecutter.use_drf == 'y' and cookiecutter.use_swagger == 'y' -%}
 drf-spectacular==0.29.0
 {%- endif %}

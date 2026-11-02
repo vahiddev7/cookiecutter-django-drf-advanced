@@ -6,6 +6,7 @@ import string
 
 project_dir = Path.cwd()
 database_engine = "{{ cookiecutter.database_engine }}"
+cloud_storage = "{{ cookiecutter.cloud_storage }}"
 project_slug = "{{ cookiecutter.project_slug }}"
 
 database_identifier = re.sub(r"[^A-Za-z0-9_]", "_", project_slug)
@@ -67,6 +68,11 @@ if not env_file.exists() and env_example.exists():
         content += f"RABBITMQ_DEFAULT_PASS={rabbitmq_password}\n"
 
     env_file.write_text(content, encoding="utf-8")
+
+if cloud_storage == "none":
+    storage_settings = project_dir / "config" / "settings" / "storage.py"
+    if storage_settings.exists():
+        storage_settings.unlink()
 
 if "{{ cookiecutter.use_drf }}" != "y":
     authentication_app = project_dir / "apps" / "authentication"
