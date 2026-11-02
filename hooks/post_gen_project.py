@@ -7,6 +7,7 @@ import string
 project_dir = Path.cwd()
 database_engine = "{{ cookiecutter.database_engine }}"
 cloud_storage = "{{ cookiecutter.cloud_storage }}"
+use_sentry = "{{ cookiecutter.use_sentry }}"
 project_slug = "{{ cookiecutter.project_slug }}"
 
 database_identifier = re.sub(r"[^A-Za-z0-9_]", "_", project_slug)
@@ -73,6 +74,11 @@ if cloud_storage == "none":
     storage_settings = project_dir / "config" / "settings" / "storage.py"
     if storage_settings.exists():
         storage_settings.unlink()
+
+if use_sentry != "y":
+    sentry_settings = project_dir / "config" / "settings" / "sentry.py"
+    if sentry_settings.exists():
+        sentry_settings.unlink()
 
 if "{{ cookiecutter.use_drf }}" != "y":
     authentication_app = project_dir / "apps" / "authentication"
