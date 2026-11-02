@@ -4,6 +4,7 @@ from pathlib import Path
 
 from config.settings.env import env
 from .logging_config import LOGGING
+from .storage import STORAGES
 
 {% if cookiecutter.use_sentry == "y" %}
 from .sentry import configure_sentry
@@ -48,6 +49,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "corsheaders",
     "django.contrib.staticfiles",
+    {% if cookiecutter.cloud_storage != "none" %}
+    "storages",
+    {% endif %}
     {% if cookiecutter.use_drf == "y" and cookiecutter.database_engine != "sqlserver" %}
     "rest_framework_simplejwt.token_blacklist",
     {% endif %}
