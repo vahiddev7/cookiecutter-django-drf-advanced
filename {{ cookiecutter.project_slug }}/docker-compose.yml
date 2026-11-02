@@ -132,14 +132,19 @@ services:
       {% if cookiecutter.database_engine == 'sqlite' %}
       - sqlite_data:/app/data
       {% endif %}
-    {% if cookiecutter.database_engine == 'sqlserver' %}
+    {% if cookiecutter.cloud_storage == 'silo' or cookiecutter.database_engine != 'sqlite' %}
     depends_on:
+      {% if cookiecutter.cloud_storage == 'silo' %}
+      silo-init:
+        condition: service_completed_successfully
+      {% endif %}
+      {% if cookiecutter.database_engine == 'sqlserver' %}
       db-init:
         condition: service_completed_successfully
-    {% elif cookiecutter.database_engine != 'sqlite' %}
-    depends_on:
+      {% elif cookiecutter.database_engine != 'sqlite' %}
       db:
         condition: service_healthy
+      {% endif %}
     {% endif %}
     networks:
       - {{ cookiecutter.project_slug }}_network
@@ -283,6 +288,9 @@ volumes:
   static_data:
   media_data:
   nginx_logs:
+  {% if cookiecutter.cloud_storage == 'silo' %}
+  silo_data:
+  {% endif %}
 
 networks:
   {{ cookiecutter.project_slug }}_network:
