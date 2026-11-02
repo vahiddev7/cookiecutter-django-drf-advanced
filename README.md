@@ -29,6 +29,8 @@ The template emphasizes:
 - Configurable database selection: PostgreSQL, MySQL, SQLite, or SQL Server.
 - Optional Docker setup.
 - Optional Celery integration with Redis or RabbitMQ as the broker.
+- Console logging with a dedicated, environment-configurable logging configuration.
+- Optional Sentry error monitoring with configurable environment and performance sampling.
 - App-generation script that creates and registers a new Django application.
 - Per-app test layout for unit, integration, and end-to-end tests.
 - Optional authentication app when DRF is enabled.
@@ -77,6 +79,7 @@ The Cookiecutter prompts let you tailor the generated project:
 | Database | PostgreSQL, MySQL, SQLite, or SQL Server |
 | Celery | Enable or disable background task processing |
 | Celery broker | Redis or RabbitMQ, when Celery is enabled |
+| Sentry | Enable or disable Sentry error monitoring |
 
 The authentication application is generated only when DRF is enabled. Optional features should be selected based on the requirements of the project being generated.
 
@@ -153,6 +156,12 @@ When DRF is enabled, the generated authentication app provides the configured re
 | `POST` | `/api/auth/token/refresh/` | Refresh an access token |
 
 Registration validates the submitted account data and password using the generated Django configuration. Review the generated authentication settings and permissions before exposing an application publicly.
+
+## Logging and error monitoring
+
+Logging is configured in `config/settings/logging_config.py` and imported by the base settings module. Set `LOG_LEVEL` in the environment to adjust console verbosity. The default is `INFO`.
+
+Sentry is opt-in at project generation (`use_sentry=y`). When enabled, install the generated dependencies and set `SENTRY_DSN` in the deployment environment. An empty DSN leaves Sentry disabled. Configure `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`, and `SENTRY_PROFILES_SAMPLE_RATE` to match your monitoring and quota requirements. `SENTRY_SEND_DEFAULT_PII` defaults to `False`; review privacy requirements before changing it.
 
 ## Testing
 
