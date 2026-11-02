@@ -167,7 +167,7 @@ Sentry is opt-in at project generation (`use_sentry=y`). When enabled, install t
 
 ## Cloud storage
 
-Choose `none` to keep uploaded media and collected static files on the local filesystem, or select `s3`, `gcloud`, or `azure` during project generation. The generated `config/settings/storage.py` keeps provider configuration separate from the base settings module and configures media and static files independently.
+Choose `none` to keep uploaded media and collected static files on the local filesystem, or select `s3`, `gcloud`, or `azure` during project generation. When a cloud provider is selected, the generated `config/settings/storage.py` keeps provider configuration separate from the base settings module and configures media and static files independently. With `none`, that file is not generated and Django uses its local filesystem defaults.
 
 Set the provider-specific variables in the deployment environment (see `.env.example`). For AWS, instance/task roles are preferred to long-lived access keys; an endpoint URL can be supplied for S3-compatible services. Google Cloud Storage uses Application Default Credentials. Azure credentials should also be supplied through a secret manager or workload identity where supported.
 
