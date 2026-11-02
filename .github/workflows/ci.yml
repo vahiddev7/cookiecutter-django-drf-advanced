@@ -10,8 +10,6 @@ jobs:
   generated-project:
     runs-on: ubuntu-latest
     env:
-      # A non-secret placeholder allows the S3 storage backend to be imported in CI.
-      AWS_STORAGE_BUCKET_NAME: ci-test-bucket
     strategy:
       fail-fast: false
       matrix:
@@ -103,6 +101,11 @@ jobs:
           cloud_storage=${{ matrix.cloud_storage }}
           celery_broker=${{ matrix.celery_broker }}
 
+      - name: Configure S3 bucket for containerized CI
+        if: matrix.cloud_storage == 's3'
+        working-directory: ${{ runner.temp }}/generated/ci_test_project
+        run: echo "AWS_STORAGE_BUCKET_NAME=ci-test-bucket" >> .env
+
       - name: Install generated project dependencies
         working-directory: ${{ runner.temp }}/generated/ci_test_project
         run: python -m pip install -r requirements/base.txt pytest pytest-django
@@ -142,12 +145,16 @@ jobs:
                   assert SIMPLE_JWT["ROTATE_REFRESH_TOKENS"] is True
                   assert SIMPLE_JWT["BLACKLIST_AFTER_ROTATION"] is True
 
-          from config.settings.base import LOGGING, STORAGES
+          from config.settings.base import LOGGING
           assert LOGGING["version"] == 1
           assert "console" in LOGGING["handlers"]
+          storage_settings = Path("config/settings/storage.py")
           if os.environ["CLOUD_STORAGE"] == "none":
-              assert STORAGES["default"]["BACKEND"] == "django.core.files.storage.FileSystemStorage"
+              assert not storage_settings.exists()
+              assert "from .storage import STORAGES" not in Path("config/settings/base.py").read_text()
           elif os.environ["CLOUD_STORAGE"] == "s3":
+              assert storage_settings.is_file()
+              from config.settings.base import STORAGES
               assert STORAGES["default"]["BACKEND"] == "storages.backends.s3.S3Storage"
               assert STORAGES["staticfiles"]["BACKEND"] == "storages.backends.s3.S3Storage"
 
