@@ -1,0 +1,146 @@
+name: Validate and publish release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to validate and publish
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate release candidate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tagged source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve and validate version tag
+        id: version
+        shell: bash
+        env:
+          INPUT_TAG: ${{ inputs.tag }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            tag="$INPUT_TAG"
+          else
+            tag="$REF_NAME"
+          fi
+          if [[ ! "$tag" =~ ^v(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Expected a semantic version tag such as v1.2.3; received: $tag" >&2
+            exit 1
+          fi
+          git rev-parse "$tag^{commit}" >/dev/null
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Cookiecutter
+        run: python -m pip install --upgrade pip cookiecutter
+
+      - name: Generate minimal project
+        run: |
+          mkdir -p "$RUNNER_TEMP/release-minimal"
+          cookiecutter --no-input . --output-dir "$RUNNER_TEMP/release-minimal" \
+            project_name="Release Minimal" project_slug=release_minimal author_name="Release CI" \
+            use_drf=y use_swagger=n use_docker=n database_engine=sqlite \
+            use_celery=n celery_broker=redis use_sentry=n cloud_storage=none
+
+      - name: Generate full-featured project
+        run: |
+          mkdir -p "$RUNNER_TEMP/release-full"
+          cookiecutter --no-input . --output-dir "$RUNNER_TEMP/release-full" \
+            project_name="Release Full" project_slug=release_full author_name="Release CI" \
+            use_drf=y use_swagger=y use_docker=y database_engine=postgresql \
+            use_celery=y celery_broker=rabbitmq use_sentry=y cloud_storage=silo
+
+      - name: Validate generated projects and documentation
+        run: |
+          test -s README.md
+          test -s CHANGELOG.md
+          test -s docs/index.html
+          test -s docs/releasing.html
+          test -s docs/quickstart.html
+          test -s docs/configuration.html
+          test -s docs/architecture.html
+          test -s docs/drf-best-practices.html
+          test -s "$RUNNER_TEMP/release-minimal/release_minimal/manage.py"
+          test -s "$RUNNER_TEMP/release-full/release_full/manage.py"
+          test ! -e "$RUNNER_TEMP/release-minimal/release_minimal/config/celery.py"
+          test -e "$RUNNER_TEMP/release-full/release_full/config/celery.py"
+          grep -q 'FLOWER_BASIC_AUTH=admin:' "$RUNNER_TEMP/release-full/release_full/.env"
+          grep -q 'pgsty/silo:' "$RUNNER_TEMP/release-full/release_full/docker-compose.yml"
+          python - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          class DocumentCheck(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.title = False
+                  self.h1_count = 0
+              def handle_starttag(self, tag, attrs):
+                  if tag == "h1":
+                      self.h1_count += 1
+              def handle_data(self, data):
+                  if data.strip():
+                      self.title = True
+
+          for page in Path("docs").glob("*.html"):
+              parser = DocumentCheck()
+              parser.feed(page.read_text(encoding="utf-8"))
+              assert parser.h1_count == 1, f"{page} must contain exactly one h1"
+          PY
+
+      - name: Validate Docker Compose output
+        working-directory: ${{ runner.temp }}/release-full/release_full
+        run: docker compose config --quiet
+
+  publish:
+    name: Publish GitHub Release
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create release with generated notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            tag="$INPUT_TAG"
+          else
+            tag="$REF_NAME"
+          fi
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists; refusing to overwrite it."
+            exit 1
+          fi
+          gh release create "$tag" \
+            --verify-tag \
+            --title "$tag" \
+            --generate-notes \
+            --notes-start-tag "$(git describe --tags --abbrev=0 "$tag^" 2>/dev/null || true)"
