@@ -180,6 +180,8 @@ jobs:
                   env_file = Path(".env").read_text()
                   assert "pgsty/silo:RELEASE.2026-10-26T00-00-00Z" in compose
                   assert "silo-init:" in compose
+                  assert "./docker/silo-init.py:/silo-init.py:ro" in compose
+                  assert Path("docker/silo-init.py").is_file()
                   assert "silo_data:/data" in compose
                   assert "MINIO_ROOT_USER=silo_" in env_file
                   assert "MINIO_ROOT_PASSWORD=" in env_file
