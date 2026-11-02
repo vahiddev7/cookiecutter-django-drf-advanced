@@ -36,7 +36,7 @@ jobs:
           test -s docs/architecture.html
           test -s docs/drf-best-practices.html
           test -s docs/releasing.html
-          test -s docs/CHANGELOG.html
+          test -s docs/changelog.html
           test -s docs/sitemap.xml
           test -s docs/robots.txt
           grep -q 'rel="canonical"' docs/index.html
