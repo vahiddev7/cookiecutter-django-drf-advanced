@@ -255,10 +255,10 @@ If this template is useful, consider starring the repository and sharing feedbac
 Published versions use Semantic Versioning (`vMAJOR.MINOR.PATCH`). For reproducible generation, pin Cookiecutter to a published tag:
 
 ```bash
-cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced --checkout v1.2.0
+cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced --checkout v0.1.0
 ```
 
-Replace `v1.2.0` with an actual published release. The release workflow validates minimal and full-featured generated projects before creating a GitHub Release. See the [release policy](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html), [changelog](CHANGELOG.md), [contribution guide](CONTRIBUTING.md), and [security policy](SECURITY.md).
+Use `v0.1.0` after its tag has been published; until then, use the default branch for preview generation. The release workflow validates minimal and full-featured generated projects before creating a GitHub Release. See the [release policy](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html), [changelog](CHANGELOG.md), [contribution guide](CONTRIBUTING.md), and [security policy](SECURITY.md).
 
 ## Project governance
 
