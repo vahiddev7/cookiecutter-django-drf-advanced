@@ -28,7 +28,7 @@ The template emphasizes:
 - Optional API documentation configuration.
 - Configurable database selection: PostgreSQL, MySQL, SQLite, or SQL Server.
 - Optional Docker setup.
-- Optional Celery integration with Redis or RabbitMQ as the broker.
+- Optional Celery integration with Redis or RabbitMQ as the broker, including a Flower task-monitoring dashboard with authenticated local access and persistent task history.
 - Console logging with a dedicated, environment-configurable logging configuration.
 - Optional Sentry error monitoring with configurable environment and performance sampling.
 - Optional object storage for media and static assets (AWS S3, Silo, Google Cloud Storage, or Azure Blob Storage).
@@ -84,6 +84,8 @@ The Cookiecutter prompts let you tailor the generated project:
 | Cloud storage | Local filesystem, AWS S3, Silo (self-hosted S3-compatible), Google Cloud Storage, or Azure Blob Storage |
 
 The authentication application is generated only when DRF is enabled. Optional features should be selected based on the requirements of the project being generated.
+
+When Celery is enabled, Docker Compose also starts Flower at `http://localhost:5555`. The generated `.env` includes a unique `FLOWER_BASIC_AUTH` credential (`admin` plus a generated password). Flower provides worker/task monitoring and supported task controls; its state is persisted in the `flower_data` volume. The port is bound to `127.0.0.1` by default and should not be exposed publicly without HTTPS and an access-controlled reverse proxy. Flower is not generated when Celery is disabled.
 
 ## Architecture
 

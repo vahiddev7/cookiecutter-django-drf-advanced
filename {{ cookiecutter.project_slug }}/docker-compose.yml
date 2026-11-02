@@ -276,6 +276,37 @@ services:
     {% endif %}
     networks:
       - {{ cookiecutter.project_slug }}_network
+
+  flower:
+    build:
+      context: .
+      dockerfile: docker/production/Dockerfile
+    command: celery -A config flower --address=0.0.0.0 --port=5555 --basic-auth=${FLOWER_BASIC_AUTH:?Set FLOWER_BASIC_AUTH in .env} --persistent=True --db=/data/flower.db
+    container_name: {{ cookiecutter.project_slug }}_flower
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.prod
+      RUN_MIGRATIONS: "false"
+      RUN_COLLECTSTATIC: "false"
+      {% if cookiecutter.database_engine != 'sqlite' %}
+      DB_HOST: db
+      {% if cookiecutter.database_engine == 'sqlserver' %}
+      DB_USER: sa
+      {% endif %}
+      {% endif %}
+    ports:
+      - "127.0.0.1:5555:5555"
+    volumes:
+      - flower_data:/data
+    depends_on:
+      broker:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    networks:
+      - {{ cookiecutter.project_slug }}_network
   {% endif %}
 
 volumes:
@@ -291,6 +322,9 @@ volumes:
   static_data:
   media_data:
   nginx_logs:
+  {% if cookiecutter.use_celery == 'y' %}
+  flower_data:
+  {% endif %}
   {% if cookiecutter.cloud_storage == 'silo' %}
   silo_data:
   {% endif %}

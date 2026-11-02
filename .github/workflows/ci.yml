@@ -124,6 +124,7 @@ jobs:
           USE_DRF: ${{ matrix.use_drf }}
           USE_SWAGGER: ${{ matrix.use_swagger }}
           USE_CELERY: ${{ matrix.use_celery }}
+          USE_DOCKER: ${{ matrix.use_docker }}
           USE_SENTRY: ${{ matrix.use_sentry }}
           CLOUD_STORAGE: ${{ matrix.cloud_storage }}
           DATABASE_ENGINE: ${{ matrix.database_engine }}
@@ -139,8 +140,20 @@ jobs:
 
           if os.environ["USE_CELERY"] == "n":
               assert not Path("config/celery.py").exists()
+              if os.environ["USE_DOCKER"] == "y":
+                  assert "flower:" not in Path("docker-compose.yml").read_text()
+              assert "flower>=" not in Path("requirements/base.txt").read_text()
           else:
               assert Path("config/celery.py").is_file()
+              if os.environ["USE_DOCKER"] == "y":
+                  compose = Path("docker-compose.yml").read_text()
+                  env_file = Path(".env").read_text()
+                  assert "flower:" in compose
+                  assert "127.0.0.1:5555:5555" in compose
+                  assert "flower_data:/data" in compose
+                  assert "--basic-auth=${FLOWER_BASIC_AUTH" in compose
+                  assert "FLOWER_BASIC_AUTH=admin:" in env_file
+              assert "flower>=" in Path("requirements/base.txt").read_text()
 
           if os.environ["USE_DRF"] == "y":
               from config.settings.base import INSTALLED_APPS, SIMPLE_JWT
@@ -176,6 +189,7 @@ jobs:
               assert STORAGES["default"]["BACKEND"] == "storages.backends.s3.S3Storage"
               assert STORAGES["staticfiles"]["BACKEND"] == "storages.backends.s3.S3Storage"
               if os.environ["CLOUD_STORAGE"] == "silo":
+                  assert os.environ["USE_DOCKER"] == "y"
                   compose = Path("docker-compose.yml").read_text()
                   env_file = Path(".env").read_text()
                   assert "pgsty/silo:RELEASE.2026-10-26T00-00-00Z" in compose
