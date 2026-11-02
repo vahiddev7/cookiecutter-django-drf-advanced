@@ -35,11 +35,14 @@ jobs:
           test -s docs/configuration.html
           test -s docs/architecture.html
           test -s docs/drf-best-practices.html
+          test -s docs/releasing.html
+          test -s docs/CHANGELOG.html
           test -s docs/sitemap.xml
           test -s docs/robots.txt
           grep -q 'rel="canonical"' docs/index.html
           grep -q 'rel="canonical"' docs/drf-best-practices.html
           grep -q 'Sitemap:' docs/robots.txt
+          grep -q 'releasing.html' docs/sitemap.xml
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

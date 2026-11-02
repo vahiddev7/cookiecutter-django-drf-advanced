@@ -6,8 +6,10 @@ A production-oriented, configurable project template for building maintainable D
 [![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
 [![Docker](https://img.shields.io/badge/Docker-supported-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Cookiecutter](https://img.shields.io/badge/Cookiecutter-template-d4aa00)](https://cookiecutter.readthedocs.io/)
+[![Latest release](https://img.shields.io/github/v/release/vahiddev7/cookiecutter-django-drf-advanced?display_name=tag)](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/releases)
+[![Release workflow](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/actions/workflows/release.yml/badge.svg)](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/actions/workflows/release.yml)
 
-[**Read the documentation website**](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/) · [Quick start](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/quickstart.html) · [Architecture](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/architecture.html)
+[**Read the documentation website**](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/) · [Quick start](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/quickstart.html) · [Architecture](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/architecture.html) · [Releases](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html)
 
 ## Why this template?
 
@@ -246,3 +248,20 @@ This repository currently does not contain a license file. Until a license is ad
 If this template is useful, consider starring the repository and sharing feedback through GitHub Issues.
 
 **Repository:** [vahiddev7/cookiecutter-django-drf-advanced](https://github.com/vahiddev7/cookiecutter-django-drf-advanced)
+
+
+## Releases and version pinning
+
+Published versions use Semantic Versioning (`vMAJOR.MINOR.PATCH`). For reproducible generation, pin Cookiecutter to a published tag:
+
+```bash
+cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced --checkout v0.1.0
+```
+
+Use `v0.1.0` after its tag has been published; until then, use the default branch for preview generation. The release workflow validates minimal and full-featured generated projects before creating a GitHub Release. See the [release policy](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html), [changelog](CHANGELOG.md), [contribution guide](CONTRIBUTING.md), and [security policy](SECURITY.md).
+
+## Project governance
+
+- [Contributing](CONTRIBUTING.md)
+- [Security policy](SECURITY.md)
+- [Changelog](CHANGELOG.md)

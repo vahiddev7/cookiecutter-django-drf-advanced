@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Release Process and Versioning | Django DRF Advanced</title>
+<meta name="description" content="Understand semantic versioning, release validation, automated GitHub Releases, changelog maintenance, and compatibility expectations for Django DRF Advanced Cookiecutter.">
+<meta name="robots" content="index,follow"><link rel="canonical" href="https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html"><link rel="stylesheet" href="assets/site.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="./">Django DRF Advanced</a><nav aria-label="Main navigation"><a href="quickstart.html">Quick start</a><a href="configuration.html">Configuration</a><a href="architecture.html">Architecture</a><a href="releasing.html">Releases</a><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">GitHub</a></nav></div></header>
+<main><div class="container content"><p class="breadcrumbs"><a href="./">Home</a> / Releases</p><p class="eyebrow">Project lifecycle</p><h1>Releases, versioning, and compatibility</h1>
+<p>Each release is a versioned snapshot of the Cookiecutter template. The generated project is copied into a new directory; it is not automatically upgraded when the template receives a newer release.</p>
+<h2>Versioning policy</h2>
+<p>Releases use <a href="https://semver.org/">Semantic Versioning</a> with tags in the form <code>vMAJOR.MINOR.PATCH</code>.</p>
+<ul><li><strong>MAJOR:</strong> incompatible changes to prompts, generated project structure, configuration contracts, or documented behavior.</li><li><strong>MINOR:</strong> backward-compatible features, integrations, or optional capabilities.</li><li><strong>PATCH:</strong> backward-compatible fixes, dependency corrections, documentation improvements, and CI maintenance.</li></ul>
+<p>Because this is a generator, compatibility includes both the Cookiecutter prompt interface and the files emitted for each supported option combination. A change can be breaking even if the template repository itself still runs.</p>
+<h2>How a release is published</h2>
+<ol><li>Merge the reviewed change into <code>master</code> after required CI checks pass.</li><li>Update <code>CHANGELOG.md</code> with user-visible changes and move the relevant entries out of Unreleased.</li><li>Create and push an annotated semantic version tag, for example <code>v0.1.0</code>.</li><li>The release workflow generates minimal and full-featured projects, validates key generated files and Docker Compose configuration, and checks documentation.</li><li>If validation succeeds, GitHub creates a Release from the tag with automatically generated release notes.</li></ol>
+<pre><code>git checkout master
+git pull --ff-only
+git tag -a v0.1.0 -m "Release v0.1.0"
+git push origin v0.1.0</code></pre>
+<p>Do not create a tag for an unreviewed or failing commit. A failed validation blocks publication. Existing releases are never overwritten by the workflow.</p>
+<h2>Using a pinned template version</h2>
+<p>For reproducible project generation, use a release tag rather than the moving default branch:</p>
+<pre><code>cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced --checkout v0.1.0</code></pre>
+<p>Replace the example tag with a published version. Review the release notes before adopting a new version.</p>
+<h2>Updating an existing generated project</h2>
+<p>Cookiecutter does not continuously synchronize an already-generated project with this repository. Do not regenerate over a working application as an upgrade strategy. Compare the release notes and template diff, then apply relevant changes deliberately, preserving application code, environment-specific configuration, and secrets.</p>
+<h2>Release artifacts and support</h2>
+<p>GitHub Releases provide the source archive for each tag and the generated release notes. The initial pre-1.0 baseline is documented as <code>v0.1.0</code>; publish its tag only after the release-engineering pull request is merged and required checks pass. No binary distribution or hosted runtime is implied. Report reproducible defects with the release tag, Python version, operating system, and sanitized Cookiecutter answers.</p>
+<p>See <a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced/blob/master/CONTRIBUTING.md">contribution guidelines</a>, <a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced/blob/master/SECURITY.md">security policy</a>, and the <a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced/blob/master/CHANGELOG.md">changelog</a>.</p>
+</div></main><footer class="site-footer"><div class="container"><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">Source code on GitHub</a></div></footer></body></html>
