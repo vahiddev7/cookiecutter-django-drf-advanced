@@ -41,6 +41,39 @@ STORAGES = {
         },
     },
 }
+{% elif cookiecutter.cloud_storage == "silo" %}
+# Silo is a self-hosted, S3-compatible object store.
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": env("AWS_STORAGE_BUCKET_NAME"),
+            "location": env("AWS_MEDIA_LOCATION", default="media"),
+            "region_name": env("AWS_S3_REGION_NAME", default="us-east-1"),
+            "endpoint_url": env("AWS_S3_ENDPOINT_URL", default="http://silo:9000"),
+            "access_key": env("AWS_ACCESS_KEY_ID"),
+            "secret_key": env("AWS_SECRET_ACCESS_KEY"),
+            "addressing_style": "path",
+            "default_acl": None,
+            "file_overwrite": False,
+            "querystring_auth": env.bool("AWS_QUERYSTRING_AUTH", default=True),
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": env("AWS_STORAGE_BUCKET_NAME"),
+            "location": env("AWS_STATIC_LOCATION", default="static"),
+            "region_name": env("AWS_S3_REGION_NAME", default="us-east-1"),
+            "endpoint_url": env("AWS_S3_ENDPOINT_URL", default="http://silo:9000"),
+            "access_key": env("AWS_ACCESS_KEY_ID"),
+            "secret_key": env("AWS_SECRET_ACCESS_KEY"),
+            "addressing_style": "path",
+            "default_acl": None,
+            "querystring_auth": False,
+        },
+    },
+}
 {% elif cookiecutter.cloud_storage == "gcloud" %}
 # Google Cloud Storage uses Application Default Credentials by default.
 STORAGES = {
