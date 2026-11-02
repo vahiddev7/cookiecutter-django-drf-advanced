@@ -3,6 +3,11 @@ from datetime import timedelta
 from pathlib import Path
 
 from config.settings.env import env
+from .logging_config import LOGGING
+
+{% if cookiecutter.use_sentry == "y" %}
+from .sentry import configure_sentry
+{% endif %}
 
 {% if cookiecutter.database_engine == "mysql" %}
 import pymysql
@@ -11,6 +16,11 @@ pymysql.install_as_MySQLdb()
 {% endif %}
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+# Keep optional error-monitoring initialization out of the main settings module.
+{% if cookiecutter.use_sentry == "y" %}
+configure_sentry()
+{% endif %}
 
 SECRET_KEY = env("SECRET_KEY")
 DEBUG = env.bool("DEBUG", default=False)
