@@ -33,6 +33,10 @@ django-filter = "25.2"
 drf-spectacular = "0.29.0"
 {% endif %}
 
+{% if cookiecutter.use_sentry == "y" %}
+sentry-sdk = ">=2.0.0,<3.0.0"
+{% endif %}
+
 {% if cookiecutter.use_celery == "y" %}
 celery = ">=5.0.0"
 {% if cookiecutter.celery_broker == "redis" %}
