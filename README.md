@@ -163,7 +163,7 @@ Registration validates the submitted account data and password using the generat
 
 Logging is configured in `config/settings/logging_config.py` and imported by the base settings module. Set `LOG_LEVEL` in the environment to adjust console verbosity. The default is `INFO`.
 
-Sentry is opt-in at project generation (`use_sentry=y`). When enabled, install the generated dependencies and set `SENTRY_DSN` in the deployment environment. An empty DSN leaves Sentry disabled. Configure `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`, and `SENTRY_PROFILES_SAMPLE_RATE` to match your monitoring and quota requirements. `SENTRY_SEND_DEFAULT_PII` defaults to `False`; review privacy requirements before changing it.
+Sentry is opt-in at project generation (`use_sentry=y`). When enabled, `config/settings/sentry.py` is included and the base settings module initializes it conditionally. Install the generated dependencies and set `SENTRY_DSN` in the deployment environment. An empty DSN leaves Sentry disabled. Configure `SENTRY_ENVIRONMENT`, `SENTRY_TRACES_SAMPLE_RATE`, and `SENTRY_PROFILES_SAMPLE_RATE` to match your monitoring and quota requirements. `SENTRY_SEND_DEFAULT_PII` defaults to `False`. When `use_sentry=n`, the Sentry settings file is omitted entirely.
 
 ## Cloud storage
 
