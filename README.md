@@ -31,7 +31,7 @@ The template emphasizes:
 - Optional Celery integration with Redis or RabbitMQ as the broker.
 - Console logging with a dedicated, environment-configurable logging configuration.
 - Optional Sentry error monitoring with configurable environment and performance sampling.
-- Optional cloud object storage for media and static assets (AWS S3, Google Cloud Storage, or Azure Blob Storage).
+- Optional object storage for media and static assets (AWS S3, Silo, Google Cloud Storage, or Azure Blob Storage).
 - App-generation script that creates and registers a new Django application.
 - Per-app test layout for unit, integration, and end-to-end tests.
 - Optional authentication app when DRF is enabled.
@@ -81,7 +81,7 @@ The Cookiecutter prompts let you tailor the generated project:
 | Celery | Enable or disable background task processing |
 | Celery broker | Redis or RabbitMQ, when Celery is enabled |
 | Sentry | Enable or disable Sentry error monitoring |
-| Cloud storage | Local filesystem, AWS S3, Google Cloud Storage, or Azure Blob Storage |
+| Cloud storage | Local filesystem, AWS S3, Silo (self-hosted S3-compatible), Google Cloud Storage, or Azure Blob Storage |
 
 The authentication application is generated only when DRF is enabled. Optional features should be selected based on the requirements of the project being generated.
 
@@ -167,9 +167,9 @@ Sentry is opt-in at project generation (`use_sentry=y`). When enabled, `config/s
 
 ## Cloud storage
 
-Choose `none` to keep uploaded media and collected static files on the local filesystem, or select `s3`, `gcloud`, or `azure` during project generation. When a cloud provider is selected, the generated `config/settings/storage.py` keeps provider configuration separate from the base settings module and configures media and static files independently. With `none`, that file is not generated and Django uses its local filesystem defaults.
+Choose `none` to keep uploaded media and collected static files on the local filesystem, or select `s3`, `silo`, `gcloud`, or `azure` during project generation. When a cloud provider is selected, the generated `config/settings/storage.py` keeps provider configuration separate from the base settings module and configures media and static files independently. With `none`, that file is not generated and Django uses its local filesystem defaults.
 
-Set the provider-specific variables in the deployment environment (see `.env.example`). For AWS, instance/task roles are preferred to long-lived access keys; an endpoint URL can be supplied for S3-compatible services. Google Cloud Storage uses Application Default Credentials. Azure credentials should also be supplied through a secret manager or workload identity where supported.
+Set the provider-specific variables in the deployment environment (see `.env.example`). For AWS, instance/task roles are preferred to long-lived access keys; an endpoint URL can be supplied for S3-compatible services. Selecting `silo` adds a pinned Silo container to Docker Compose, persists its data in a named volume, and initializes the configured bucket before Django migrations. The S3 API is available on port `9000` and its administration console on port `9001`; the generated `.env` contains unique local-development credentials. Set `AWS_S3_CUSTOM_DOMAIN` to the host and port reachable by browsers (default `localhost:9000`). For production, use TLS, private networking, dedicated least-privilege application credentials instead of root credentials, and managed secrets. Silo is an independent community-maintained MinIO fork, not an official MinIO product. Google Cloud Storage uses Application Default Credentials. Azure credentials should also be supplied through a secret manager or workload identity where supported.
 
 Run `python manage.py collectstatic` after configuring the selected provider. Ensure the bucket/container permissions, CORS rules, and public/private access policy match your application. Do not commit cloud credentials.
 
