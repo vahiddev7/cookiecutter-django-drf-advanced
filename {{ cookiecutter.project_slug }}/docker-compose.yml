@@ -72,6 +72,45 @@ services:
       - {{ cookiecutter.project_slug }}_network
   {% endif %}
 
+  {% if cookiecutter.cloud_storage == 'silo' %}
+  silo:
+    image: docker.io/pgsty/silo:RELEASE.2026-10-26T00-00-00Z
+    container_name: {{ cookiecutter.project_slug }}_silo
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - silo_data:/data
+    healthcheck:
+      test: ["CMD", "silo", "healthcheck", "ready"]
+      interval: 30s
+      timeout: 10s
+      start_period: 2m
+      retries: 3
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+
+  silo-init:
+    image: docker.io/pgsty/silo:RELEASE.2026-10-26T00-00-00Z
+    container_name: {{ cookiecutter.project_slug }}_silo_init
+    entrypoint: ["/bin/sh", "-c"]
+    command: >-
+      mcli alias set local http://silo:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" &&
+      mcli mb --ignore-existing "local/$AWS_STORAGE_BUCKET_NAME"
+    env_file:
+      - .env
+    depends_on:
+      silo:
+        condition: service_healthy
+    networks:
+      - {{ cookiecutter.project_slug }}_network
+  {% endif %}
+
   migrate:
     build:
       context: .
