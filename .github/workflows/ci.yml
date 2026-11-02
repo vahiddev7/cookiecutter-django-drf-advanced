@@ -9,7 +9,6 @@ on:
 jobs:
   generated-project:
     runs-on: ubuntu-latest
-    env:
     strategy:
       fail-fast: false
       matrix:
@@ -104,7 +103,7 @@ jobs:
       - name: Configure S3 bucket for containerized CI
         if: matrix.cloud_storage == 's3'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
-        run: echo "AWS_STORAGE_BUCKET_NAME=ci-test-bucket" >> .env
+        run: sed -i 's/^AWS_STORAGE_BUCKET_NAME=$/AWS_STORAGE_BUCKET_NAME=ci-test-bucket/' .env
 
       - name: Install generated project dependencies
         working-directory: ${{ runner.temp }}/generated/ci_test_project
