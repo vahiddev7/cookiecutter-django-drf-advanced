@@ -68,6 +68,8 @@ STORAGES = {
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
         "OPTIONS": {
             "azure_container": env("AZURE_MEDIA_CONTAINER", default="media"),
+            "account_name": env("AZURE_ACCOUNT_NAME", default=None),
+            "account_key": env("AZURE_ACCOUNT_KEY", default=None),
             "location": env("AZURE_MEDIA_LOCATION", default=""),
             "overwrite_files": False,
         },
@@ -76,6 +78,8 @@ STORAGES = {
         "BACKEND": "storages.backends.azure_storage.AzureStorage",
         "OPTIONS": {
             "azure_container": env("AZURE_STATIC_CONTAINER", default="static"),
+            "account_name": env("AZURE_ACCOUNT_NAME", default=None),
+            "account_key": env("AZURE_ACCOUNT_KEY", default=None),
             "location": env("AZURE_STATIC_LOCATION", default=""),
         },
     },
