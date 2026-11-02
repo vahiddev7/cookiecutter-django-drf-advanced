@@ -20,6 +20,7 @@ jobs:
             use_docker: n
             use_celery: n
             use_sentry: n
+            cloud_storage: none
             celery_broker: redis
           - name: sqlite-full-options
             database_engine: sqlite
@@ -28,6 +29,7 @@ jobs:
             use_docker: y
             use_celery: y
             use_sentry: y
+            cloud_storage: s3
             celery_broker: redis
           - name: sqlite-without-drf
             database_engine: sqlite
@@ -36,6 +38,7 @@ jobs:
             use_docker: y
             use_celery: y
             use_sentry: n
+            cloud_storage: none
             celery_broker: rabbitmq
           - name: postgresql-rabbitmq
             database_engine: postgresql
@@ -91,6 +94,7 @@ jobs:
           database_engine=${{ matrix.database_engine }}
           use_celery=${{ matrix.use_celery }}
           use_sentry=${{ matrix.use_sentry }}
+          cloud_storage=${{ matrix.cloud_storage }}
           celery_broker=${{ matrix.celery_broker }}
 
       - name: Install generated project dependencies
@@ -103,6 +107,7 @@ jobs:
           USE_DRF: ${{ matrix.use_drf }}
           USE_SWAGGER: ${{ matrix.use_swagger }}
           USE_CELERY: ${{ matrix.use_celery }}
+          CLOUD_STORAGE: ${{ matrix.cloud_storage }}
           DATABASE_ENGINE: ${{ matrix.database_engine }}
         run: |
           python - <<'PY'
@@ -131,9 +136,14 @@ jobs:
                   assert SIMPLE_JWT["ROTATE_REFRESH_TOKENS"] is True
                   assert SIMPLE_JWT["BLACKLIST_AFTER_ROTATION"] is True
 
-          from config.settings.base import LOGGING
+          from config.settings.base import LOGGING, STORAGES
           assert LOGGING["version"] == 1
           assert "console" in LOGGING["handlers"]
+          if os.environ["CLOUD_STORAGE"] == "none":
+              assert STORAGES["default"]["BACKEND"] == "django.core.files.storage.FileSystemStorage"
+          elif os.environ["CLOUD_STORAGE"] == "s3":
+              assert STORAGES["default"]["BACKEND"] == "storages.backends.s3.S3Storage"
+              assert STORAGES["staticfiles"]["BACKEND"] == "storages.backends.s3.S3Storage"
 
           if os.environ["USE_DRF"] == "n" or os.environ["USE_SWAGGER"] == "n":
               assert not Path("static/swagger").exists()
