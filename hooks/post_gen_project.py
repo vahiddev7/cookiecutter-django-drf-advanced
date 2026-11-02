@@ -62,13 +62,13 @@ if not env_file.exists() and env_example.exists():
         )
 
     if cloud_storage == "silo":
-        silo_user = "app_" + secrets.token_hex(8)
-        silo_password = secrets.token_urlsafe(32)
-        content += "\\n# Local Silo S3-compatible object storage credentials\\n"
-        content += f"AWS_ACCESS_KEY_ID={silo_user}\\n"
-        content += f"AWS_SECRET_ACCESS_KEY={silo_password}\\n"
-        content += "MINIO_ROOT_USER=silo_admin\\n"
-        content += f"MINIO_ROOT_PASSWORD={secrets.token_urlsafe(40)}\\n"
+        silo_user = "silo_" + secrets.token_hex(8)
+        silo_password = secrets.token_urlsafe(40)
+        content += "\n# Local Silo credentials (use dedicated scoped credentials in production)\n"
+        content += f"AWS_ACCESS_KEY_ID={silo_user}\n"
+        content += f"AWS_SECRET_ACCESS_KEY={silo_password}\n"
+        content += f"MINIO_ROOT_USER={silo_user}\n"
+        content += f"MINIO_ROOT_PASSWORD={silo_password}\n"
 
     if "{{ cookiecutter.use_celery }}" == "y" and "{{ cookiecutter.celery_broker }}" == "rabbitmq":
         rabbitmq_user = "app_" + secrets.token_hex(8)
