@@ -9,6 +9,9 @@ on:
 jobs:
   generated-project:
     runs-on: ubuntu-latest
+    env:
+      # A non-secret placeholder allows the S3 storage backend to be imported in CI.
+      AWS_STORAGE_BUCKET_NAME: ci-test-bucket
     strategy:
       fail-fast: false
       matrix:
@@ -47,6 +50,7 @@ jobs:
             use_docker: y
             use_celery: y
             use_sentry: n
+            cloud_storage: none
             celery_broker: rabbitmq
           - name: mysql-swagger
             database_engine: mysql
@@ -55,6 +59,7 @@ jobs:
             use_docker: y
             use_celery: n
             use_sentry: n
+            cloud_storage: none
             celery_broker: redis
           - name: sqlserver-redis
             database_engine: sqlserver
@@ -63,6 +68,7 @@ jobs:
             use_docker: y
             use_celery: y
             use_sentry: n
+            cloud_storage: none
             celery_broker: redis
 
     steps:
