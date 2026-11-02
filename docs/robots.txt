@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://vahiddev7.github.io/cookiecutter-django-drf-advanced/sitemap.xml
