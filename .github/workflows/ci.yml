@@ -212,7 +212,7 @@ jobs:
       - name: Run migrations against the selected database
         if: matrix.use_docker == 'y'
         working-directory: ${{ runner.temp }}/generated/ci_test_project
-        run: docker compose run --rm migrate
+        run: docker compose run --rm migrate sh -c "python manage.py migrate --noinput"
 
       - name: Run integration tests on PostgreSQL and SQL Server
         if: matrix.database_engine == 'postgresql' || matrix.database_engine == 'sqlserver'
