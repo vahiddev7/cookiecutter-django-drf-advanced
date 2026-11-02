@@ -34,9 +34,11 @@ jobs:
           test -s docs/quickstart.html
           test -s docs/configuration.html
           test -s docs/architecture.html
+          test -s docs/drf-best-practices.html
           test -s docs/sitemap.xml
           test -s docs/robots.txt
           grep -q 'rel="canonical"' docs/index.html
+          grep -q 'rel="canonical"' docs/drf-best-practices.html
           grep -q 'Sitemap:' docs/robots.txt
 
       - name: Upload Pages artifact
