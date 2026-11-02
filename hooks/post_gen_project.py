@@ -70,6 +70,11 @@ if not env_file.exists() and env_example.exists():
         content += f"MINIO_ROOT_USER={silo_user}\n"
         content += f"MINIO_ROOT_PASSWORD={silo_password}\n"
 
+    if "{{ cookiecutter.use_celery }}" == "y":
+        flower_password = secrets.token_urlsafe(32)
+        content += "\n# Flower dashboard credentials (change for shared/production environments)\n"
+        content += f"FLOWER_BASIC_AUTH=admin:{flower_password}\n"
+
     if "{{ cookiecutter.use_celery }}" == "y" and "{{ cookiecutter.celery_broker }}" == "rabbitmq":
         rabbitmq_user = "app_" + secrets.token_hex(8)
         rabbitmq_password = secrets.token_urlsafe(32)
