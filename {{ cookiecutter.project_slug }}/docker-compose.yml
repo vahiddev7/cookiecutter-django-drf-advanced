@@ -96,14 +96,17 @@ services:
       - {{ cookiecutter.project_slug }}_network
 
   silo-init:
-    image: docker.io/pgsty/silo:RELEASE.2026-10-26T00-00-00Z
+    image: python:3.12-alpine
     container_name: {{ cookiecutter.project_slug }}_silo_init
-    entrypoint: ["/bin/sh", "-c"]
-    command: >-
-      mcli alias set local http://silo:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" &&
-      mcli mb --ignore-existing "local/$AWS_STORAGE_BUCKET_NAME"
-    env_file:
-      - .env
+    command: ["sh", "-c", "pip install --no-cache-dir boto3 && python /silo-init.py"]
+    environment:
+      AWS_S3_ENDPOINT_URL: http://silo:9000
+      AWS_STORAGE_BUCKET_NAME: ${AWS_STORAGE_BUCKET_NAME}
+      AWS_ACCESS_KEY_ID: ${MINIO_ROOT_USER}
+      AWS_SECRET_ACCESS_KEY: ${MINIO_ROOT_PASSWORD}
+      AWS_DEFAULT_REGION: us-east-1
+    volumes:
+      - ./docker/silo-init.py:/silo-init.py:ro
     depends_on:
       silo:
         condition: service_healthy
