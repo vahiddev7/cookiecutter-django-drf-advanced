@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Configuration Options | Django DRF Advanced Cookiecutter</title>
+<meta name="description" content="Explore Django DRF Advanced Cookiecutter options for Django REST Framework, API documentation, Docker, database engines, Celery, Redis, and RabbitMQ.">
+<meta name="robots" content="index,follow"><link rel="canonical" href="https://vahiddev7.github.io/cookiecutter-django-drf-advanced/configuration.html"><link rel="stylesheet" href="assets/site.css"></head>
+<body><header class="site-header"><div class="header-inner"><a class="brand" href="./">Django DRF Advanced</a><nav aria-label="Main navigation"><a href="quickstart.html">Quick start</a><a href="configuration.html">Configuration</a><a href="architecture.html">Architecture</a><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">GitHub</a></nav></div></header>
+<main><div class="container content"><p class="breadcrumbs"><a href="./">Home</a> / Configuration</p><p class="eyebrow">Template options</p><h1>Configure your generated Django project</h1>
+<p>The template uses Cookiecutter prompts to include only the integrations selected for a project. The available options are defined in the repository's <a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced/blob/master/cookiecutter.json">cookiecutter.json</a>.</p>
+<h2>Django REST Framework</h2><p>Enable or disable Django REST Framework. The authentication application is generated when DRF is enabled.</p>
+<h2>API documentation</h2><p>Choose whether to include the configured Swagger/OpenAPI support. This option is relevant when DRF is enabled.</p>
+<h2>Docker</h2><p>Choose whether the generated project includes the Docker development setup and compose configuration.</p>
+<h2>Database engine</h2><p>Select one of the configured database backends:</p><ul><li>PostgreSQL</li><li>MySQL</li><li>SQLite</li><li>SQL Server</li></ul><p>Database drivers and operational requirements differ. Verify the selected backend in your target environment.</p>
+<h2>Celery and message broker</h2><p>Enable Celery for background task processing, then select Redis or RabbitMQ as the broker. The broker choice applies when Celery is enabled.</p>
+<h2>Choosing options</h2><p>Start with the smallest set of integrations your application needs. You can add infrastructure as requirements become clearer, but changes to generated configuration should be tested against the selected database and service combination.</p>
+<p>Continue to the <a href="quickstart.html">quick start guide</a> or read the <a href="architecture.html">architecture overview</a>.</p>
+</div></main><footer class="site-footer"><div class="container"><a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">Source code on GitHub</a></div></footer></body></html>
