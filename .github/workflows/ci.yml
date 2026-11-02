@@ -19,6 +19,7 @@ jobs:
             use_swagger: n
             use_docker: n
             use_celery: n
+            use_sentry: n
             celery_broker: redis
           - name: sqlite-full-options
             database_engine: sqlite
@@ -26,6 +27,7 @@ jobs:
             use_swagger: y
             use_docker: y
             use_celery: y
+            use_sentry: y
             celery_broker: redis
           - name: sqlite-without-drf
             database_engine: sqlite
@@ -33,6 +35,7 @@ jobs:
             use_swagger: n
             use_docker: y
             use_celery: y
+            use_sentry: n
             celery_broker: rabbitmq
           - name: postgresql-rabbitmq
             database_engine: postgresql
@@ -40,6 +43,7 @@ jobs:
             use_swagger: n
             use_docker: y
             use_celery: y
+            use_sentry: n
             celery_broker: rabbitmq
           - name: mysql-swagger
             database_engine: mysql
@@ -47,6 +51,7 @@ jobs:
             use_swagger: y
             use_docker: y
             use_celery: n
+            use_sentry: n
             celery_broker: redis
           - name: sqlserver-redis
             database_engine: sqlserver
@@ -54,6 +59,7 @@ jobs:
             use_swagger: n
             use_docker: y
             use_celery: y
+            use_sentry: n
             celery_broker: redis
 
     steps:
@@ -84,6 +90,7 @@ jobs:
           use_docker=${{ matrix.use_docker }}
           database_engine=${{ matrix.database_engine }}
           use_celery=${{ matrix.use_celery }}
+          use_sentry=${{ matrix.use_sentry }}
           celery_broker=${{ matrix.celery_broker }}
 
       - name: Install generated project dependencies
@@ -123,6 +130,10 @@ jobs:
                   assert blacklist_app in INSTALLED_APPS
                   assert SIMPLE_JWT["ROTATE_REFRESH_TOKENS"] is True
                   assert SIMPLE_JWT["BLACKLIST_AFTER_ROTATION"] is True
+
+          from config.settings.base import LOGGING
+          assert LOGGING["version"] == 1
+          assert "console" in LOGGING["handlers"]
 
           if os.environ["USE_DRF"] == "n" or os.environ["USE_SWAGGER"] == "n":
               assert not Path("static/swagger").exists()

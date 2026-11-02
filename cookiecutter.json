@@ -7,5 +7,6 @@
   "use_docker": "y",
   "database_engine": ["postgresql", "mysql", "sqlite", "sqlserver"],
   "use_celery": ["y", "n"],
+  "use_sentry": ["n", "y"],
   "celery_broker": ["redis", "rabbitmq"]
 }
