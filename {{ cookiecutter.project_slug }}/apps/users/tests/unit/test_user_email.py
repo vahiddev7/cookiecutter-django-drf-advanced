@@ -21,7 +21,7 @@ def test_user_save_normalizes_email():
         pytest.param(
             "Mixed.Case@example.com",
             marks=pytest.mark.skipif(
-                connection.vendor == "sql_server",
+                connection.vendor == "microsoft",
                 reason=(
                     "The default SQL Server collation is case-insensitive, "
                     "so equality checks cannot detect letter casing."
