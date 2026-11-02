@@ -145,4 +145,3 @@ jobs:
             --verify-tag \
             --title "$tag" \
             --generate-notes \
-            --notes-start-tag "$(git describe --tags --abbrev=0 "$tag^" 2>/dev/null || true)"
