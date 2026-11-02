@@ -7,6 +7,8 @@ A production-oriented, configurable project template for building maintainable D
 [![Docker](https://img.shields.io/badge/Docker-supported-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![Cookiecutter](https://img.shields.io/badge/Cookiecutter-template-d4aa00)](https://cookiecutter.readthedocs.io/)
 
+[**Read the documentation website**](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/) · [Quick start](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/quickstart.html) · [Architecture](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/architecture.html)
+
 ## Why this template?
 
 Starting a backend project involves repeatedly making the same foundational decisions. This template packages those decisions into a configurable scaffold, so a team can spend more time on product behavior and less time on setup.
