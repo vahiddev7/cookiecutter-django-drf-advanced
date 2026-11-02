@@ -51,6 +51,7 @@ STORAGES = {
             "location": env("AWS_MEDIA_LOCATION", default="media"),
             "region_name": env("AWS_S3_REGION_NAME", default="us-east-1"),
             "endpoint_url": env("AWS_S3_ENDPOINT_URL", default="http://silo:9000"),
+            "custom_domain": env("AWS_S3_CUSTOM_DOMAIN", default="localhost:9000"),
             "access_key": env("AWS_ACCESS_KEY_ID"),
             "secret_key": env("AWS_SECRET_ACCESS_KEY"),
             "addressing_style": "path",
