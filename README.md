@@ -1,6 +1,8 @@
 # Django DRF Advanced Cookiecutter
 
-A production-oriented, configurable project template for building maintainable Django backend applications. It provides a consistent starting point for project configuration, optional Django REST Framework support, Docker-based development, testing, and a modular application structure.
+A configurable **Django Cookiecutter template** for generating maintainable Python backend projects with optional Django REST Framework (DRF), Docker, Celery, multiple database backends, cloud object storage, and a modular application architecture.
+
+Use this repository as a **Django REST Framework project template** when you want a repeatable starting point for APIs without rebuilding the same project structure and infrastructure configuration for every service.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-5.2-092E20?logo=django&logoColor=white)](https://www.djangoproject.com/)
@@ -9,28 +11,28 @@ A production-oriented, configurable project template for building maintainable D
 [![Latest release](https://img.shields.io/github/v/release/vahiddev7/cookiecutter-django-drf-advanced?display_name=tag)](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/releases)
 [![Release workflow](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/actions/workflows/release.yml/badge.svg)](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/actions/workflows/release.yml)
 
-[**Read the documentation website**](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/) · [Quick start](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/quickstart.html) · [Architecture](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/architecture.html) · [Releases](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html)
+[**Read the Django project documentation**](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/) · [Quick start](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/quickstart.html) · [Configuration](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/configuration.html) · [Architecture](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/architecture.html) · [Releases](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html)
 
-## Why this template?
+## Why use this Django Cookiecutter?
 
-Starting a backend project involves repeatedly making the same foundational decisions. This template packages those decisions into a configurable scaffold, so a team can spend more time on product behavior and less time on setup.
+Starting a Django backend involves repeatedly making the same foundational decisions. This Cookiecutter packages those decisions into a configurable scaffold, so developers can spend more time on application behavior and less time on initial setup.
 
-The template emphasizes:
+The template is designed for developers building Django applications, Django REST Framework APIs, and Python backend services. It emphasizes:
 
-- **Modularity:** keep Django applications organized around clear responsibilities.
+- **Modularity:** organize Django applications around clear responsibilities.
 - **Optional layers:** add services and selectors when they provide real value; avoid empty architectural placeholders.
-- **Configurable foundations:** choose database, API, documentation, Docker, and task-queue options during generation.
-- **Testability:** organize tests by scope inside each application.
-- **Operational awareness:** provide environment-based settings and container configuration as a starting point.
+- **Configurable foundations:** choose database, API, documentation, Docker, and task-queue options during project generation.
+- **Testability:** organize unit, integration, and end-to-end tests inside each Django app.
+- **Operational foundations:** start with environment-based settings, container configuration, logging, and optional monitoring.
 
 ## Features
 
 - Django project scaffold with separated base, development, and production settings.
-- Optional Django REST Framework integration.
+- Optional Django REST Framework integration for API development.
 - Optional API documentation configuration.
 - Configurable database selection: PostgreSQL, MySQL, SQLite, or SQL Server.
-- Optional Docker setup.
-- Optional Celery integration with Redis or RabbitMQ as the broker, including a Flower task-monitoring dashboard with authenticated local access and persistent task history.
+- Optional Docker setup for local development.
+- Optional Celery integration with Redis or RabbitMQ as the broker, including Flower task monitoring.
 - Console logging with a dedicated, environment-configurable logging configuration.
 - Optional Sentry error monitoring with configurable environment and performance sampling.
 - Optional object storage for media and static assets (AWS S3, Silo, Google Cloud Storage, or Azure Blob Storage).
@@ -46,13 +48,13 @@ The template emphasizes:
 python -m pip install --upgrade cookiecutter
 ```
 
-### 2. Generate a project
+### 2. Generate a Django project
 
 ```bash
 cookiecutter https://github.com/vahiddev7/cookiecutter-django-drf-advanced
 ```
 
-Cookiecutter asks for the project name and the options described below. It then creates a new project directory using your answers.
+Cookiecutter asks for the project name and configuration options. It then creates a new Django project directory using your answers. For reproducible generation from a published release, follow the [version-pinning instructions](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html#using-a-pinned-template-version).
 
 ### 3. Configure environment variables
 
@@ -85,11 +87,11 @@ The Cookiecutter prompts let you tailor the generated project:
 | Sentry | Enable or disable Sentry error monitoring |
 | Cloud storage | Local filesystem, AWS S3, Silo (self-hosted S3-compatible), Google Cloud Storage, or Azure Blob Storage |
 
-The authentication application is generated only when DRF is enabled. Optional features should be selected based on the requirements of the project being generated.
+The authentication application is generated only when DRF is enabled. Optional features should be selected based on the requirements of the project being generated. See the [complete configuration reference](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/configuration.html).
 
 When Celery is enabled, Docker Compose also starts Flower at `http://localhost:5555`. The generated `.env` includes a unique `FLOWER_BASIC_AUTH` credential (`admin` plus a generated password). Flower provides worker/task monitoring and supported task controls; its state is persisted in the `flower_data` volume. The port is bound to `127.0.0.1` by default and should not be exposed publicly without HTTPS and an access-controlled reverse proxy. Flower is not generated when Celery is disabled.
 
-## Architecture
+## Django backend architecture
 
 The template encourages a clear separation between HTTP handling, application behavior, and data access without forcing every layer into every app.
 
@@ -111,7 +113,7 @@ Request -> View -> Selector -> ORM -> Database
 - **Selectors** encapsulate reusable or sufficiently complex read queries.
 - **Models** represent persisted domain data and Django ORM behavior.
 
-Services and selectors are conventions, not mandatory layers. Keep simple behavior simple; introduce an abstraction when it improves clarity, reuse, or testability.
+Services and selectors are conventions, not mandatory layers. Keep simple behavior simple; introduce an abstraction when it improves clarity, reuse, or testability. Read the [Django backend architecture guide](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/architecture.html) for more detail.
 
 ## Generated project structure
 
@@ -245,10 +247,9 @@ This repository currently does not contain a license file. Until a license is ad
 
 ---
 
-If this template is useful, consider starring the repository and sharing feedback through GitHub Issues.
+If this Django Cookiecutter template is useful, consider starring the repository and sharing feedback through GitHub Issues.
 
 **Repository:** [vahiddev7/cookiecutter-django-drf-advanced](https://github.com/vahiddev7/cookiecutter-django-drf-advanced)
-
 
 ## Releases and version pinning
 
