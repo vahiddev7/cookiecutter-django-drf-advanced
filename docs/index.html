@@ -4,26 +4,45 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="google-site-verification" content="gQjxbUO_os3JFua4T_cHEDO8AVXbyuTZVgLGHWlQlFA">
-  <title>Django REST Framework Cookiecutter Template | Django DRF Advanced</title>
-  <meta name="description" content="Generate a configurable Django and Django REST Framework project with a modular architecture, optional Docker, Celery, database integrations, and organized tests.">
+  <title>Django Cookiecutter Template for Django REST Framework | Django DRF Advanced</title>
+  <meta name="description" content="Generate a configurable Django project with this Python Cookiecutter template. Add Django REST Framework, Docker, Celery, PostgreSQL, cloud storage, and modular app structure.">
   <meta name="robots" content="index,follow,max-image-preview:large">
   <link rel="canonical" href="https://vahiddev7.github.io/cookiecutter-django-drf-advanced/">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Django REST Framework Cookiecutter Template">
-  <meta property="og:description" content="A configurable Django project template with optional DRF, Docker, Celery, and database integrations.">
+  <meta property="og:site_name" content="Django DRF Advanced Cookiecutter">
+  <meta property="og:title" content="Django Cookiecutter Template for Django REST Framework">
+  <meta property="og:description" content="Generate a configurable Python Django backend with optional DRF, Docker, Celery, database integrations, cloud storage, and modular architecture.">
   <meta property="og:url" content="https://vahiddev7.github.io/cookiecutter-django-drf-advanced/">
+  <meta property="og:locale" content="en_US">
   <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Django Cookiecutter Template for Django REST Framework">
+  <meta name="twitter:description" content="A configurable Django and DRF project generator with Docker, Celery, database, and storage options.">
   <link rel="stylesheet" href="assets/site.css">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "SoftwareSourceCode",
-    "name": "Django DRF Advanced Cookiecutter",
-    "description": "A configurable Cookiecutter template for Django and Django REST Framework projects with optional Docker, Celery, and database integrations.",
-    "codeRepository": "https://github.com/vahiddev7/cookiecutter-django-drf-advanced",
-    "programmingLanguage": ["Python"],
-    "runtimePlatform": "Python 3.10+",
-    "applicationCategory": "DeveloperApplication"
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://vahiddev7.github.io/cookiecutter-django-drf-advanced/#website",
+        "url": "https://vahiddev7.github.io/cookiecutter-django-drf-advanced/",
+        "name": "Django DRF Advanced Cookiecutter",
+        "inLanguage": "en"
+      },
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://vahiddev7.github.io/cookiecutter-django-drf-advanced/#software",
+        "name": "Django DRF Advanced Cookiecutter",
+        "alternateName": ["Django Cookiecutter Template", "Django REST Framework Cookiecutter"],
+        "description": "A configurable Cookiecutter template for generating Python Django backend projects with optional Django REST Framework, Docker, Celery, database integrations, and cloud object storage.",
+        "url": "https://vahiddev7.github.io/cookiecutter-django-drf-advanced/",
+        "codeRepository": "https://github.com/vahiddev7/cookiecutter-django-drf-advanced",
+        "programmingLanguage": "Python",
+        "runtimePlatform": "Python 3.10+",
+        "applicationCategory": "DeveloperApplication",
+        "isPartOf": {"@id": "https://vahiddev7.github.io/cookiecutter-django-drf-advanced/#website"}
+      }
+    ]
   }
   </script>
 </head>
@@ -34,31 +53,35 @@
 </div></header>
 <main><div class="container">
   <section class="hero">
-    <p class="eyebrow">Python · Django · Cookiecutter</p>
-    <h1>A practical Django REST Framework project template</h1>
-    <p class="lead">Start a maintainable Django backend with a configurable project scaffold. Choose the integrations you need, generate the project, and focus on building your application instead of repeating setup work.</p>
-    <div class="actions"><a class="button" href="quickstart.html">Generate your project</a><a class="button secondary" href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">View source on GitHub</a></div>
+    <p class="eyebrow">Python · Django · Cookiecutter · Django REST Framework</p>
+    <h1>Django Cookiecutter Template for REST Framework Projects</h1>
+    <p class="lead">Generate a maintainable Python Django backend from a configurable project scaffold. Enable Django REST Framework, Docker, Celery, your database, and optional cloud storage, then focus on building your application instead of repeating setup work.</p>
+    <div class="actions"><a class="button" href="quickstart.html">Generate your Django project</a><a class="button secondary" href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">View source on GitHub</a></div>
   </section>
   <section class="grid" aria-label="Template capabilities">
     <article class="card"><h2>Modular Django structure</h2><p>Separate configuration and application responsibilities, with services and selectors available when they add value.</p></article>
-    <article class="card"><h2>Optional integrations</h2><p>Select Django REST Framework, API documentation, Docker, database backend, and Celery during generation.</p></article>
+    <article class="card"><h2>Optional Django REST Framework</h2><p>Generate a Django REST API foundation with optional authentication and API documentation.</p></article>
+    <article class="card"><h2>Docker and background tasks</h2><p>Choose Docker and Celery with Redis or RabbitMQ to match the needs of your backend project.</p></article>
+    <article class="card"><h2>Flexible database and storage</h2><p>Configure PostgreSQL, MySQL, SQLite, SQL Server, and optional cloud object storage integrations.</p></article>
     <article class="card"><h2>Testing foundation</h2><p>Keep unit, integration, and end-to-end tests organized inside each Django application.</p></article>
   </section>
   <section class="content">
+    <h2>A configurable Python Django project generator</h2>
+    <p>This open-source Django Cookiecutter template helps developers create a consistent backend foundation for web applications and REST APIs. Instead of copying an old project or manually assembling settings, select the integrations you need when generating a new project. The generated files depend on your Cookiecutter answers, so optional components are not forced into every application.</p>
     <h2>What can you generate?</h2>
-    <p>The Cookiecutter prompts configure a Django project with separated settings and optional integrations for PostgreSQL, MySQL, SQLite, SQL Server, Redis, RabbitMQ, and Celery. The exact generated files depend on the selected options.</p>
-    <h2>Documentation</h2>
+    <p>The Cookiecutter prompts configure separated Django settings and optional integrations for Django REST Framework, PostgreSQL, MySQL, SQLite, SQL Server, Redis, RabbitMQ, Celery, Docker, Sentry, and cloud object storage. Read the <a href="configuration.html">configuration guide</a> for the available options.</p>
+    <h2>Documentation and guides</h2>
     <div class="grid">
-      <article class="card"><h3><a href="quickstart.html">Quick start guide</a></h3><p>Install Cookiecutter and generate your first project.</p></article>
-      <article class="card"><h3><a href="configuration.html">Configuration options</a></h3><p>Understand the available choices and optional components.</p></article>
-      <article class="card"><h3><a href="architecture.html">Architecture overview</a></h3><p>Learn how views, serializers, services, selectors, and models fit together.</p></article>
-      <article class="card"><h3><a href="drf-best-practices.html">DRF best practices</a></h3><p>Learn practical patterns for permissions, serializers, querysets, testing, and API security.</p></article>
-      <article class="card"><h3><a href="releasing.html">Releases and versioning</a></h3><p>Understand semantic versioning, release validation, and how to pin a template version.</p></article>
+      <article class="card"><h3><a href="quickstart.html">Django Cookiecutter quick start</a></h3><p>Install Cookiecutter and generate a new Django project step by step.</p></article>
+      <article class="card"><h3><a href="configuration.html">Django template configuration</a></h3><p>Understand database, API, Docker, Celery, and storage options.</p></article>
+      <article class="card"><h3><a href="architecture.html">Django backend architecture guide</a></h3><p>Learn how views, serializers, services, selectors, and models fit together.</p></article>
+      <article class="card"><h3><a href="drf-best-practices.html">Django REST Framework best practices</a></h3><p>Review practical patterns for permissions, serializers, querysets, testing, and API security.</p></article>
+      <article class="card"><h3><a href="releasing.html">Releases and version pinning</a></h3><p>Understand semantic versioning, release validation, and how to pin a template version.</p></article>
       <article class="card"><h3><a href="changelog.html">Changelog</a></h3><p>Find the canonical version history and published release notes.</p></article>
     </div>
-    <div class="note"><strong>Release policy:</strong> Use a published semantic version tag for reproducible generation. Read the <a href="releasing.html">release guide</a> before upgrading. </div>
+    <div class="note"><strong>Release policy:</strong> Use a published semantic version tag for reproducible generation. Read the <a href="releasing.html">release guide</a> before upgrading.</div>
     <div class="note"><strong>Project status:</strong> This repository is an evolving template. Review the generated settings and security configuration before using a generated project in production.</div>
   </section>
 </div></main>
-<footer class="site-footer"><div class="container">Open-source project template · <a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">GitHub repository</a></div></footer>
+<footer class="site-footer"><div class="container">Open-source Django project template · <a href="https://github.com/vahiddev7/cookiecutter-django-drf-advanced">GitHub repository</a></div></footer>
 </body></html>
