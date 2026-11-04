@@ -1,0 +1,66 @@
+site_name: Django DRF Advanced Cookiecutter
+site_description: A configurable Django Cookiecutter template for Django REST Framework and Python backend projects.
+site_url: https://cookiecutter-django-drf-advanced.readthedocs.io/en/latest/
+repo_url: https://github.com/vahiddev7/cookiecutter-django-drf-advanced
+repo_name: vahiddev7/cookiecutter-django-drf-advanced
+edit_uri: edit/master/rtd_docs/
+
+docs_dir: rtd_docs
+strict: true
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.action.edit
+    - search.suggest
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Getting started:
+      - Quick start: getting-started/quickstart.md
+  - Configuration:
+      - Options: configuration/options.md
+  - Architecture:
+      - Overview: architecture/overview.md
+  - Development:
+      - Testing strategy: development/testing.md
+      - DRF best practices: development/drf-best-practices.md
+  - Operations:
+      - Production checklist: operations/production.md
+  - Project:
+      - Changelog: project/changelog.md
+      - Contributing: project/contributing.md
+      - Security: project/security.md
