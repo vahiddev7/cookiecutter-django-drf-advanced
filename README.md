@@ -11,7 +11,7 @@ Use this repository as a **Django REST Framework project template** when you wan
 [![Latest release](https://img.shields.io/github/v/release/vahiddev7/cookiecutter-django-drf-advanced?display_name=tag)](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/releases)
 [![Release workflow](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/actions/workflows/release.yml/badge.svg)](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/actions/workflows/release.yml)
 
-[**Read the Django project documentation**](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/) · [Quick start](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/quickstart.html) · [Configuration](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/configuration.html) · [Architecture](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/architecture.html) · [Releases](https://vahiddev7.github.io/cookiecutter-django-drf-advanced/releasing.html)
+[**Read the documentation**](https://cookiecutter-django-drf-advanced.readthedocs.io/en/latest/) · [Quick start](https://cookiecutter-django-drf-advanced.readthedocs.io/en/latest/getting-started/quickstart/) · [Configuration](https://cookiecutter-django-drf-advanced.readthedocs.io/en/latest/configuration/options/) · [Architecture](https://cookiecutter-django-drf-advanced.readthedocs.io/en/latest/architecture/overview/) · [Releases](https://github.com/vahiddev7/cookiecutter-django-drf-advanced/releases)
 
 ## Why use this Django Cookiecutter?
 
